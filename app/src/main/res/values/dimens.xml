@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sp_16">16sp</dimen>
+    <dimen name="dp_16">16dp</dimen>
+    <dimen name="px_16">16px</dimen>
+</resources>

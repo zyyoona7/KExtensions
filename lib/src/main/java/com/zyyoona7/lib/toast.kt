@@ -13,7 +13,7 @@ import android.widget.Toast
 /*
   ---------- Context ----------
  */
-fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = {
+fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     if (duration == 0 || duration == 1) {
         Toast.makeText(applicationContext, msg, duration).show()
     } else {

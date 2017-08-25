@@ -13,7 +13,7 @@ import android.widget.Toast
 /*
   ---------- Context ----------
  */
-inline fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = {
+fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = {
     if (duration == 0 || duration == 1) {
         Toast.makeText(applicationContext, msg, duration).show()
     } else {
@@ -24,17 +24,17 @@ inline fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) = {
 /*
   ---------- Fragment ----------
  */
-inline fun Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
+fun Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     activity.toast(msg, duration)
 }
 
-inline fun android.support.v4.app.Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
+fun android.support.v4.app.Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     activity.toast(msg, duration)
 }
 
 /*
   ---------- View ----------
  */
-inline fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
+fun View.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
     context.toast(msg, duration)
 }

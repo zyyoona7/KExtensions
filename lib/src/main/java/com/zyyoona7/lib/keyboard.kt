@@ -15,23 +15,22 @@ import android.view.inputmethod.InputMethodManager
 /*
   ---------- Context ----------
  */
-inline val Context.inputMethodManager: InputMethodManager?
+val Context.inputMethodManager: InputMethodManager?
     get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-inline fun Context.showSoftInput(view: View) {
+fun Context.showSoftInput(view: View) {
     view.isFocusable = true
     view.isFocusableInTouchMode = true
     view.requestFocus()
     inputMethodManager?.showSoftInput(view, InputMethodManager.SHOW_FORCED)
 }
 
-inline fun Context.hideSoftInput(view: View) {
+fun Context.hideSoftInput(view: View) {
     inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-inline fun Context.hideSoftInput(activity: Activity) {
-    var view: View = activity.currentFocus
-    view = if (view != null) view else activity.window.decorView
+fun Context.hideSoftInput(activity: Activity) {
+    val view: View = activity.currentFocus ?: activity.window.decorView
     inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
@@ -39,37 +38,37 @@ inline fun Context.hideSoftInput(activity: Activity) {
   ---------- Fragment ----------
  */
 
-inline fun Fragment.showSoftInput(view: View) {
+fun Fragment.showSoftInput(view: View) {
     activity.showSoftInput(view)
 }
 
-inline fun Fragment.hideSoftInput(view: View) {
+fun Fragment.hideSoftInput(view: View) {
     activity.hideSoftInput(view)
 }
 
-inline fun Fragment.hideSoftInput() {
+fun Fragment.hideSoftInput() {
     activity.hideSoftInput(activity)
 }
 
-inline fun android.support.v4.app.Fragment.showSoftInput(view: View) {
+fun android.support.v4.app.Fragment.showSoftInput(view: View) {
     activity.showSoftInput(view)
 }
 
-inline fun android.support.v4.app.Fragment.hideSoftInput(view: View) {
+fun android.support.v4.app.Fragment.hideSoftInput(view: View) {
     activity.hideSoftInput(view)
 }
 
-inline fun android.support.v4.app.Fragment.hideSoftInput() {
+fun android.support.v4.app.Fragment.hideSoftInput() {
     activity.hideSoftInput(activity)
 }
 
 /*
   ---------- View ----------
  */
-inline fun View.showSoftInput(view: View) {
+fun View.showSoftInput(view: View) {
     context.showSoftInput(view)
 }
 
-inline fun View.hideSoftInput(view: View) {
+fun View.hideSoftInput(view: View) {
     context.hideSoftInput(view)
 }

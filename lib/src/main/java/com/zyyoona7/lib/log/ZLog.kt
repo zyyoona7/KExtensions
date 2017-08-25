@@ -101,26 +101,30 @@ object ZLog {
     private fun handleFormat(element: StackTraceElement): String {
 
         return StringBuilder().apply {
-            append(TOP_BORDER).append("\r\n")
+            append(TOP_BORDER)
+            appendln()
             // 添加当前线程名
-            append("║ " + "Thread: " + Thread.currentThread().name).append("\r\n")
-            append(MIDDLE_BORDER).append("\r\n")
+            append("║ " + "Thread: " + Thread.currentThread().name)
+            appendln()
+            append(MIDDLE_BORDER)
+            appendln()
             // 添加类名、方法名、行数
-            append("║ ")
-            append(element.className)
-            append(".")
-            append(element.methodName)
-            append(" ")
-            append(" (")
-            append(element.fileName)
-            append(":")
-            append(element.lineNumber)
-            append(")")
-            append("\r\n")
-            append(MIDDLE_BORDER).append("\r\n")
+            append("║ ").append(element.className)
+                    .append(".")
+                    .append(element.methodName).append(" (")
+                    .append(element.fileName)
+                    .append(":")
+                    .append(element.lineNumber)
+                    .append(")")
+            appendln()
+            append(MIDDLE_BORDER)
+            appendln()
             // 添加打印的日志信息
-            append("$VERTICAL_DOUBLE_LINE ").append("%s").append("\r\n")
-            append(BOTTOM_BORDER).append("\r\n")
+            append("$VERTICAL_DOUBLE_LINE ")
+            append("%s")
+            appendln()
+            append(BOTTOM_BORDER)
+            appendln()
         }.toString()
     }
 
@@ -146,9 +150,8 @@ object ZLog {
     private fun findIndex(elements: Array<StackTraceElement>): Int {
         var index = CALL_INDEX
         while (index < elements.size) {
-            val className=elements[index].className
-            Log.e("Class",className)
-            if ( className!= ZLog::class.java.name && !elements[index].methodName.startsWith("log")) {
+            val className = elements[index].className
+            if (className != ZLog::class.java.name && !elements[index].methodName.startsWith("log")) {
                 return index
             }
             index++

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         logi("Hello")
         logw("Hello")
         loge("Hello")
-        val json="""         {'name':'zyyoona7','age':'20'}   """
+        val json = """         {'name':'zyyoona7','age':'20'}   """
         logJson(json)
         ZLog.d("你好啊")
     }

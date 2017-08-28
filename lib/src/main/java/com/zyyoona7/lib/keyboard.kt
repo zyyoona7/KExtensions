@@ -15,8 +15,8 @@ import android.view.inputmethod.InputMethodManager
 /*
   ---------- Context ----------
  */
-val Context.inputMethodManager: InputMethodManager?
-    get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//val Context.inputMethodManager: InputMethodManager?
+//    get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
 fun Context.showSoftInput(view: View) {
     view.isFocusable = true

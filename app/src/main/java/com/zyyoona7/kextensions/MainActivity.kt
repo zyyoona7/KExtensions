@@ -11,14 +11,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        logGlobalTag("GlobalTag")
+        logable(true)
+        logGlobalTag("GlobalTag")
         logv("Hello")
-        logd("Hello")
+        logd("Hello",customTag = "customTag")
         logi("Hello")
         logw("Hello")
         loge("Hello")
         val json = """         {'name':'zyyoona7','age':'20'}   """
         logJson(json)
-        ZLog.d("你好啊")
     }
 }

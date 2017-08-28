@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
+import android.support.annotation.DrawableRes
 import android.support.v4.content.ContextCompat
 import android.view.View
 
@@ -17,18 +18,18 @@ import android.view.View
  */
 fun Context.loadColor(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
 
-fun Context.loadDrawable(@ColorRes id: Int): Drawable = ContextCompat.getDrawable(this, id)
+fun Context.loadDrawable(@DrawableRes id: Int): Drawable = ContextCompat.getDrawable(this, id)
 
 /*
   ---------- Fragment ----------
  */
 fun Fragment.loadColor(@ColorRes id: Int): Int = activity.loadColor(id)
 
-fun Fragment.loadDrawable(@ColorRes id: Int): Drawable = activity.loadDrawable(id)
+fun Fragment.loadDrawable(@DrawableRes id: Int): Drawable = activity.loadDrawable(id)
 
 fun android.support.v4.app.Fragment.loadColor(@ColorRes id: Int): Int = activity.loadColor(id)
 
-fun android.support.v4.app.Fragment.loadDrawable(@ColorRes id: Int): Drawable = activity.loadDrawable(id)
+fun android.support.v4.app.Fragment.loadDrawable(@DrawableRes id: Int): Drawable = activity.loadDrawable(id)
 
 
 /*

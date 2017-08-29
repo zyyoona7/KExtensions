@@ -19,7 +19,7 @@ import android.os.Bundle
 inline fun <reified T : Context> Context.createIntent(extras: Bundle? = null): Intent {
     val intent = Intent(this, T::class.java)
     extras?.let {
-        intent.putExtras(extras)
+        intent.putExtras(it)
     }
     return intent
 }

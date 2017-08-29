@@ -85,20 +85,19 @@ object ZLog {
         val index = findIndex(elements)
         val element = elements[index]
         val tag = handleTag(element, customTag)
-        val logFormat = handleFormat(element)
         var message = msg
         if (msg.contains("\n")) {
             message = msg.replace("\n".toRegex(), "\n$VERTICAL_DOUBLE_LINE ")
         }
 
-        Log.println(priority, tag, String.format(logFormat, message))
+        Log.println(priority, tag, handleFormat(element, message))
     }
 
     /**
      * 格式化log
      * @param element
      */
-    private fun handleFormat(element: StackTraceElement): String {
+    private fun handleFormat(element: StackTraceElement, msg: String): String {
 
         return StringBuilder().apply {
             append(TOP_BORDER)
@@ -121,7 +120,7 @@ object ZLog {
             appendln()
             // 添加打印的日志信息
             append("$VERTICAL_DOUBLE_LINE ")
-            append("%s")
+            append("$msg")
             appendln()
             append(BOTTOM_BORDER)
             appendln()

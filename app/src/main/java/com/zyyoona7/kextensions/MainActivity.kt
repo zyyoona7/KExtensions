@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        logable(true)
+        logEnabled(true)
         logGlobalTag("GlobalTag")
         logv("Hello")
         logd("Hello", customTag = "customTag")

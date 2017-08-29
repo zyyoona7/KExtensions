@@ -11,8 +11,8 @@ import org.json.JSONObject
  */
 object ZLog {
 
-    var logable = true
-    var globalTag = ""
+    var logEnabled = true
+    var logGlobalTag = ""
 
     private val TOP_LEFT_CORNER = '╔'
     private val BOTTOM_LEFT_CORNER = '╚'
@@ -79,7 +79,7 @@ object ZLog {
      * @param msg
      */
     private fun log(priority: Int, customTag: String, msg: String) {
-        if (!logable) return
+        if (!logEnabled) return
 
         val elements = Thread.currentThread().stackTrace
         val index = findIndex(elements)
@@ -136,8 +136,8 @@ object ZLog {
         if (customTag.isNotBlank()) {
             return customTag
         }
-        if (globalTag.isNotBlank()) {
-            return globalTag
+        if (logGlobalTag.isNotBlank()) {
+            return logGlobalTag
         }
         return element.className.substringAfterLast(".")
     }

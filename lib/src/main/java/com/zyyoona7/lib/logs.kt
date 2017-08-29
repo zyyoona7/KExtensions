@@ -21,9 +21,9 @@ fun loge(msg: String, customTag: String = "") = ZLog.e(msg, customTag)
 fun logJson(msg: String, customTag: String = "") = ZLog.json(msg, customTag)
 
 fun logGlobalTag(global: String) {
-    ZLog.globalTag = global
+    ZLog.logGlobalTag = global
 }
 
-fun logable(logale: Boolean) {
-    ZLog.logable = logale
+fun logEnabled(logEnabled: Boolean) {
+    ZLog.logEnabled = logEnabled
 }

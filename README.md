@@ -16,7 +16,7 @@
 
   ```kotlin
   //全局控制是否输出log
-  logable(true)
+  logEnabled(true)
   //定义全局的tag
   logGlobalTag("GlobalTag")
   //verbose级别

@@ -31,5 +31,13 @@ class MainActivity : AppCompatActivity() {
         loge("dir exist ${isDirExists(externalFileDirPath+"/a")}")
 
         loge(getDirSize(publicDownloadDir))
+        loge(getDirSize(publicDCIMDir))
+        loge(getDirSize(publicPictureDir))
+        loge(getDirSize(publicMusicDir))
+        loge(getDirSize(publicMovieDir))
+
+        val download= publicDownloadDir+"/a.txt"
+        loge("path=$download \nDir=${getDirName(download)}")
+        loge("path=$download \nFile=${getFileName(download)}")
     }
 }

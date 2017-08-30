@@ -84,6 +84,31 @@ val publicDownloadDir: String
     get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath
 
 /**
+ * 获取公共的照片文件夹路径
+ */
+val publicDCIMDir: String
+    get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath
+
+/**
+ * 获取公共的图片文件夹路径
+ */
+val publicPictureDir: String
+    get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath
+
+/**
+ * 获取公共的音乐文件夹路径
+ */
+val publicMusicDir: String
+    get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).absolutePath
+
+/**
+ * 获取公共的电影文件夹路径
+ */
+val publicMovieDir: String
+    get() = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).absolutePath
+
+
+/**
  * 内存卡是否挂载
  */
 val isMountSdcard: Boolean
@@ -95,18 +120,14 @@ val isMountSdcard: Boolean
  * @param filePath
  * @return nullable
  */
-fun getFileByPath(filePath: String): File? {
-    return if (filePath.isBlank()) null else File(filePath)
-}
+fun getFileByPath(filePath: String): File? = if (filePath.isBlank()) null else File(filePath)
 
 /**
  * 判断文件是否存在
  *
  * @param file
  */
-fun isFileExists(file: File): Boolean {
-    return file.exists() && file.isFile
-}
+fun isFileExists(file: File): Boolean = file.exists() && file.isFile
 
 /**
  * 判断文件是否存在
@@ -126,9 +147,7 @@ fun isFileExists(filePath: String): Boolean {
  *
  * @param file
  */
-fun isDirExists(file: File): Boolean {
-    return file.exists() && file.isDirectory
-}
+fun isDirExists(file: File): Boolean = file.exists() && file.isDirectory
 
 /**
  * 判断文件夹是否存在
@@ -149,10 +168,8 @@ fun isDirExists(filePath: String): Boolean {
  * @param file
  * @return true 文件夹存在或者创建成功  false 文件夹不存在或者创建失败
  */
-fun createOrExistsDir(file: File): Boolean {
-    // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
-    return if (file.exists()) file.isDirectory else file.mkdirs()
-}
+fun createOrExistsDir(file: File): Boolean = // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
+        if (file.exists()) file.isDirectory else file.mkdirs()
 
 /**
  * 判断目录是否存在，不存在则判断是否创建成功
@@ -280,9 +297,7 @@ fun getFileSize(filePath: String): String {
  * @param file
  * @return 文件长度
  */
-fun getFileLength(file: File): Long {
-    return if (!isFileExists(file)) -1 else file.length()
-}
+fun getFileLength(file: File): Long = if (!isFileExists(file)) -1 else file.length()
 
 /**
  * 获取文件长度
@@ -306,12 +321,46 @@ fun getFileLength(filePath: String): Long {
  * @param byteNum 字节数
  * @return 合适内存大小
  */
-private fun byte2FitMemorySize(byteNum: Long): String {
-    return when {
-        byteNum < 0 -> "shouldn't be less than zero!"
-        byteNum < 1024 -> String.format("%.3fB", byteNum.toDouble() + 0.0005)
-        byteNum < 1048576 -> String.format("%.3fKB", byteNum.toDouble() / 1024 + 0.0005)
-        byteNum < 1073741824 -> String.format("%.3fMB", byteNum.toDouble() / 1048576 + 0.0005)
-        else -> String.format("%.3fGB", byteNum.toDouble() / 1073741824 + 0.0005)
-    }
+private fun byte2FitMemorySize(byteNum: Long): String = when {
+    byteNum < 0 -> "shouldn't be less than zero!"
+    byteNum < 1024 -> String.format("%.3fB", byteNum.toDouble() + 0.0005)
+    byteNum < 1048576 -> String.format("%.3fKB", byteNum.toDouble() / 1024 + 0.0005)
+    byteNum < 1073741824 -> String.format("%.3fMB", byteNum.toDouble() / 1048576 + 0.0005)
+    else -> String.format("%.3fGB", byteNum.toDouble() / 1073741824 + 0.0005)
 }
+
+/**
+ * 获取全路径中的最长目录
+ *
+ * @param file
+ * @return 最长目录
+ */
+fun getDirName(file: File): String = getDirName(file.path)
+
+/**
+ * 获取全路径中的最长目录
+ *
+ * @param filePath
+ * @return 最长目录
+ */
+fun getDirName(filePath: String): String =
+        if (filePath.isBlank()) filePath else filePath.substringBeforeLast(File.separator)
+
+/**
+ * 获取全路径中的文件名
+ *
+ * @param filePath
+ * @return 文件名
+ */
+fun getFileName(file: File): String = getFileName(file.path)
+
+/**
+ * 获取全路径中的文件名
+ *
+ * @param filePath
+ * @return 文件名
+ */
+fun getFileName(filePath: String): String =
+        if (filePath.isBlank()) filePath else filePath.substringAfterLast(File.separator)
+
+//todo copy,move,delete  write,read file

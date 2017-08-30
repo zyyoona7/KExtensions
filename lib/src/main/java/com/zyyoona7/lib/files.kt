@@ -3,8 +3,7 @@ package com.zyyoona7.lib
 import android.app.Fragment
 import android.content.Context
 import android.os.Environment
-import java.io.File
-import java.io.IOException
+import java.io.*
 
 
 /**
@@ -111,7 +110,7 @@ val publicMovieDir: String
 /**
  * 内存卡是否挂载
  */
-val isMountSdcard: Boolean
+val isExternalStorageWritable: Boolean
     get() = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED
 
 /**
@@ -363,4 +362,284 @@ fun getFileName(file: File): String = getFileName(file.path)
 fun getFileName(filePath: String): String =
         if (filePath.isBlank()) filePath else filePath.substringAfterLast(File.separator)
 
-//todo copy,move,delete  write,read file
+/*
+  ---------- 读/写文件----------
+ */
+/**
+ * 将字符串写入文件
+ *
+ * @param file    文件
+ * @param content 写入内容
+ * @param append  是否追加在文件末
+ * @return true 写入成功 false 写入失败
+ * @exception Exception
+ */
+fun writeStringAsFile(file: File, content: String, append: Boolean = false): Boolean {
+    if (!createOrExistsFile(file)) return false
+
+    BufferedWriter(FileWriter(file, append)).use {
+        it.write(content)
+        return true
+    }
+}
+
+/**
+ * 将字符串写入文件
+ *
+ * @param filePath    文件
+ * @param content 写入内容
+ * @param append  是否追加在文件末
+ * @return true 写入成功 false 写入失败
+ * @exception Exception
+ */
+fun writeStringAsFile(filePath: String, content: String, append: Boolean = false): Boolean {
+    val file = getFileByPath(filePath)
+    file?.let {
+        return writeStringAsFile(it, content, append)
+    }
+    return false
+}
+
+/**
+ * 将输入流写入文件
+ *
+ * @param file
+ * @param inputStream
+ * @param append
+ * @return true  false
+ */
+fun writeISAsFile(file: File, inputStream: InputStream, append: Boolean = false): Boolean {
+    if (!createOrExistsFile(file)) return false
+
+    BufferedOutputStream(FileOutputStream(file, append)).use {
+        inputStream.copyTo(it)
+        return true
+    }
+}
+
+/**
+ * 将输入流写入文件
+ *
+ * @param filePath
+ * @param inputStream
+ * @param append
+ * @return true  false
+ */
+fun writeISAsFile(filePath: String, inputStream: InputStream, append: Boolean = false): Boolean {
+    val file = getFileByPath(filePath)
+
+    file?.let {
+        return writeISAsFile(file, inputStream, append)
+    }
+    return false
+}
+
+/**
+ * 读取文件到字符串中
+ *
+ * @param file    文件路径
+ * @param charsetName 编码格式
+ * @return 字符串
+ */
+fun readFileAsString(file: File, charsetName: String = ""): String {
+    if (!isFileExists(file)) return ""
+    val reader: BufferedReader =
+            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(file))) else
+                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
+
+    val sb = StringBuilder()
+    reader.forEachLine {
+        if (sb.isNotBlank()) sb.appendln()
+        sb.append(it)
+    }
+    return sb.toString()
+}
+
+/**
+ * 读取文件到字符串中
+ *
+ * @param filePath    文件路径
+ * @param charsetName 编码格式
+ * @return 字符串
+ */
+fun readFileAsString(filePath: String, charsetName: String = ""): String {
+    val file = getFileByPath(filePath)
+    file?.let {
+        return readFileAsString(file, charsetName)
+    }
+    return ""
+}
+
+/**
+ * 读取文件到字符串列表中
+ * Do not use this function for huge files.
+ * @param file
+ * @param charsetName
+ * @return List<String>
+ */
+fun readFileAsList(file: File, charsetName: String = ""): List<String> {
+    if (!isFileExists(file)) return emptyList()
+    val reader: BufferedReader =
+            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(file))) else
+                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
+    return reader.readLines()
+}
+
+/**
+ * 读取文件到字符串列表中
+ * Do not use this function for huge files.
+ * @param filePath
+ * @param charsetName
+ * @return List<String>
+ */
+fun readFileAsList(filePath: String, charsetName: String = ""): List<String> {
+    val file = getFileByPath(filePath)
+    file?.let {
+        return readFileAsList(file, charsetName)
+    }
+    return emptyList()
+}
+
+/*
+  ---------- 文件操作：复制、移动、删除----------
+  ---------- thanks for https://github.com/Blankj/AndroidUtilCode ----------
+ */
+
+/**
+ * 复制或移动目录（默认为复制目录）
+ *
+ * @param srcDir
+ * @param destDir
+ * @param isMove default false
+ */
+fun copyOrMoveDir(srcDir: File, destDir: File, isMove: Boolean = false): Boolean {
+    val srcPath = srcDir.path + File.separator
+    val destPath = destDir.path + File.separator
+    if (destPath.contains(srcPath)) return false
+    if (!srcDir.exists() || !srcDir.isDirectory) return false
+    if (!createOrExistsDir(destDir)) return false
+
+    val files = srcDir.listFiles()
+    files?.forEach {
+        val destFile = File(destPath + it.name)
+        if (it.isFile) {
+            if (!copyOrMoveFile(it, destFile, isMove)) return false
+        } else if (it.isDirectory) {
+            if (!copyOrMoveDir(it, destFile, isMove)) return false
+        }
+    }
+
+    return !isMove || deleteDir(srcDir)
+}
+
+/**
+ * 复制或移动目录（默认为复制目录）
+ *
+ * @param srcDirPath
+ * @param destDirPath
+ * @param isMove default false
+ */
+fun copyOrMoveDir(srcDirPath: String, destDirPath: String, isMove: Boolean = false): Boolean {
+    val srcDirFile = getFileByPath(srcDirPath)
+    val destDirFile = getFileByPath(destDirPath)
+    return if (srcDirFile != null && destDirFile != null) {
+        copyOrMoveDir(srcDirFile, destDirFile, isMove)
+    } else {
+        false
+    }
+}
+
+/**
+ * 复制或移动文件（默认为复制文件）
+ *
+ * @param srcFile
+ * @param destFile
+ * @param isMove default false
+ */
+fun copyOrMoveFile(srcFile: File, destFile: File, isMove: Boolean = false): Boolean {
+    if (!srcFile.exists() || !srcFile.isFile) return false
+    if (!destFile.exists() || !destFile.isFile) return false
+
+    if (!createOrExistsDir(destFile.parentFile)) return false
+
+    return try {
+        writeISAsFile(destFile, FileInputStream(srcFile)) && !(isMove && !deleteFile(srcFile))
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+        false
+    }
+}
+
+/**
+ * 复制或移动文件（默认为复制文件）
+ *
+ * @param srcPath
+ * @param destPath
+ * @param isMove default false
+ */
+fun copyOrMoveFile(srcPath: String, destPath: String, isMove: Boolean = false): Boolean {
+    val srcFile = getFileByPath(srcPath)
+    val destFile = getFileByPath(destPath)
+    return if (srcFile != null && destFile != null) {
+        copyOrMoveFile(srcFile, destFile, isMove)
+    } else {
+        false
+    }
+}
+
+
+/**
+ * 删除文件夹
+ *
+ * @param dir
+ * @return true  false
+ *
+ */
+fun deleteDir(dir: File): Boolean {
+    if (!dir.exists()) return true
+    if (!dir.isDirectory) return false
+
+    val files = dir.listFiles()
+    files?.forEach {
+        if (it.isFile) {
+            if (!it.delete()) return false
+        } else if (it.isDirectory) {
+            if (!deleteDir(it)) return false
+        }
+    }
+
+    return dir.delete()
+}
+
+/**
+ * 删除文件夹
+ *
+ * @param dirPath
+ * @return true  false
+ *
+ */
+fun deleteDir(dirPath: String): Boolean {
+    val file = getFileByPath(dirPath)
+    file?.let { return deleteDir(file) }
+    return false
+}
+
+/**
+ * 删除文件
+ *
+ * @param file
+ * @return true  false
+ */
+fun deleteFile(file: File): Boolean = !file.exists() || (file.isFile && file.delete())
+
+/**
+ * 删除文件
+ *
+ * @param file
+ * @return true  false
+ */
+fun deleteFile(filePath: String): Boolean {
+    val file = getFileByPath(filePath)
+    file?.let { return deleteFile(file) }
+    return false
+}

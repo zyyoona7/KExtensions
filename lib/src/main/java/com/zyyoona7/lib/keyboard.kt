@@ -34,6 +34,10 @@ fun Context.hideSoftInput(activity: Activity) {
     inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
+fun Context.isSoftInputActive(): Boolean {
+    return inputMethodManager?.isActive ?: false
+}
+
 /*
   ---------- Fragment ----------
  */
@@ -50,6 +54,10 @@ fun Fragment.hideSoftInput() {
     activity.hideSoftInput(activity)
 }
 
+fun Fragment.isSoftInputActive() {
+    activity.isSoftInputActive()
+}
+
 fun android.support.v4.app.Fragment.showSoftInput(view: View) {
     activity.showSoftInput(view)
 }
@@ -62,6 +70,10 @@ fun android.support.v4.app.Fragment.hideSoftInput() {
     activity.hideSoftInput(activity)
 }
 
+fun android.support.v4.app.Fragment.isSoftInputActive() {
+    activity.isSoftInputActive()
+}
+
 /*
   ---------- View ----------
  */
@@ -71,4 +83,8 @@ fun View.showSoftInput(view: View) {
 
 fun View.hideSoftInput(view: View) {
     context.hideSoftInput(view)
+}
+
+fun View.isSoftInputActive() {
+    context.isSoftInputActive()
 }

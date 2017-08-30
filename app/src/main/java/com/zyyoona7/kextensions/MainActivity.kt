@@ -20,6 +20,16 @@ class MainActivity : AppCompatActivity() {
         loge("Hello")
         val json = """         {'name':'zyyoona7','age':'20'}   """
         logJson(json)
-        getVersionName("123")
+
+        loge(fileDirPath)
+        loge(cacheDirPath)
+        loge(externalFileDirPath)
+        loge(externalCacheDirPath)
+
+        loge("dir exist ${isDirExists(externalFileDirPath)}")
+
+        loge("dir exist ${isDirExists(externalFileDirPath+"/a")}")
+
+        loge(getDirSize(publicDownloadDir))
     }
 }

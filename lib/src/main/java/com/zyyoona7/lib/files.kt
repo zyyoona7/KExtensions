@@ -74,7 +74,7 @@ val android.support.v4.app.Fragment.externalCacheDirPath: String
     get() = activity.externalCacheDirPath
 
 /*
-  ---------- Any ----------
+  ---------- File/Any ----------
  */
 /**
  * 获取公共下载文件夹路径
@@ -124,9 +124,8 @@ fun getFileByPath(filePath: String): File? = if (filePath.isBlank()) null else F
 /**
  * 判断文件是否存在
  *
- * @param file
  */
-fun isFileExists(file: File): Boolean = file.exists() && file.isFile
+fun File.isFileExists(): Boolean = exists() && isFile
 
 /**
  * 判断文件是否存在
@@ -135,18 +134,14 @@ fun isFileExists(file: File): Boolean = file.exists() && file.isFile
  */
 fun isFileExists(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    file?.let {
-        return isFileExists(it)
-    }
-    return false
+    return file?.isFileExists() ?: false
 }
 
 /**
  * 判断文件夹是否存在
  *
- * @param file
  */
-fun isDirExists(file: File): Boolean = file.exists() && file.isDirectory
+fun File.isDirExists(): Boolean = exists() && isDirectory
 
 /**
  * 判断文件夹是否存在
@@ -155,20 +150,17 @@ fun isDirExists(file: File): Boolean = file.exists() && file.isDirectory
  */
 fun isDirExists(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    file?.let {
-        return isDirExists(it)
-    }
-    return false
+    return file?.isDirExists() ?: false
 }
 
 /**
  * 判断目录是否存在，不存在则判断是否创建成功
  *
- * @param file
  * @return true 文件夹存在或者创建成功  false 文件夹不存在或者创建失败
  */
-fun createOrExistsDir(file: File): Boolean = // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
-        if (file.exists()) file.isDirectory else file.mkdirs()
+fun File.createOrExistsDir(): Boolean =
+        // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
+        if (exists()) isDirectory else mkdirs()
 
 /**
  * 判断目录是否存在，不存在则判断是否创建成功
@@ -178,24 +170,20 @@ fun createOrExistsDir(file: File): Boolean = // 如果存在，是目录则返�
  */
 fun createOrExistsDir(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    file?.let {
-        return createOrExistsDir(it)
-    }
-    return false
+    return file?.createOrExistsDir() ?: false
 }
 
 /**
  * 判断文件是否存在，不存在则判断是否创建成功
  *
- * @param file
  * @return true 文件存在或者创建成功  false 文件不存在或者创建失败
  */
-fun createOrExistsFile(file: File): Boolean {
-    if (file.exists()) return file.isFile
-    if (!createOrExistsDir(file.parentFile)) return false
+fun File.createOrExistsFile(): Boolean {
+    if (exists()) return isFile
+    if (parentFile?.createOrExistsDir() != true) return false
 
     return try {
-        file.createNewFile()
+        createNewFile()
     } catch (e: IOException) {
         e.printStackTrace()
         false
@@ -210,20 +198,16 @@ fun createOrExistsFile(file: File): Boolean {
  */
 fun createOrExistsFile(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    file?.let {
-        return createOrExistsFile(file)
-    }
-    return false
+    return file?.createOrExistsFile() ?: false
 }
 
 /**
  * 获取文件夹目录大小
  *
- * @param dir
  * @return 文件大小 单位：B、KB、MB、GB
  */
-fun getDirSize(dir: File): String {
-    val len = getDirLength(dir)
+fun File.getDirSize(): String {
+    val len = getDirLength()
     return if (len == -1L) "" else byte2FitMemorySize(len)
 }
 
@@ -241,15 +225,14 @@ fun getDirSize(dirPath: String): String {
 /**
  * 获取目录长度
  *
- * @param dir
  * @return 目录长度
  */
-fun getDirLength(dir: File): Long {
-    if (!isDirExists(dir)) return -1
+fun File.getDirLength(): Long {
+    if (!isDirExists()) return -1
     var len: Long = 0
-    val files: Array<File>? = dir.listFiles()
+    val files: Array<File>? = listFiles()
     files?.forEach {
-        len += if (it.isDirectory) getDirLength(it) else it.length()
+        len += if (it.isDirectory) it.getDirLength() else it.length()
     }
     return len
 }
@@ -262,20 +245,16 @@ fun getDirLength(dir: File): Long {
  */
 fun getDirLength(dirPath: String): Long {
     val dir = getFileByPath(dirPath)
-    dir?.let {
-        return getDirLength(it)
-    }
-    return -1
+    return dir?.getDirLength() ?: -1
 }
 
 /**
  * 获取文件大小
  *
- * @param file
  * @return 文件大小 单位：B、KB、MB、GB
  */
-fun getFileSize(file: File): String {
-    val len = getFileLength(file)
+fun File.getFileSize(): String {
+    val len = getFileLength()
     return if (len == -1L) "" else byte2FitMemorySize(len)
 }
 
@@ -293,10 +272,9 @@ fun getFileSize(filePath: String): String {
 /**
  * 获取文件长度
  *
- * @param file
  * @return 文件长度
  */
-fun getFileLength(file: File): Long = if (!isFileExists(file)) -1 else file.length()
+fun File.getFileLength(): Long = if (!isFileExists()) -1 else length()
 
 /**
  * 获取文件长度
@@ -306,10 +284,7 @@ fun getFileLength(file: File): Long = if (!isFileExists(file)) -1 else file.leng
  */
 fun getFileLength(filePath: String): Long {
     val file = getFileByPath(filePath)
-    file?.let {
-        return getFileLength(it)
-    }
-    return -1
+    return file?.getFileLength() ?: -1
 }
 
 /**
@@ -331,10 +306,9 @@ private fun byte2FitMemorySize(byteNum: Long): String = when {
 /**
  * 获取全路径中的最长目录
  *
- * @param file
  * @return 最长目录
  */
-fun getDirName(file: File): String = getDirName(file.path)
+fun File.getDirName(): String = getDirName(path)
 
 /**
  * 获取全路径中的最长目录
@@ -348,10 +322,9 @@ fun getDirName(filePath: String): String =
 /**
  * 获取全路径中的文件名
  *
- * @param filePath
  * @return 文件名
  */
-fun getFileName(file: File): String = getFileName(file.path)
+fun File.getFileName(): String = getFileName(path)
 
 /**
  * 获取全路径中的文件名
@@ -368,16 +341,15 @@ fun getFileName(filePath: String): String =
 /**
  * 将字符串写入文件
  *
- * @param file    文件
  * @param content 写入内容
  * @param append  是否追加在文件末
  * @return true 写入成功 false 写入失败
  * @exception Exception
  */
-fun writeStringAsFile(file: File, content: String, append: Boolean = false): Boolean {
-    if (!createOrExistsFile(file)) return false
+fun File.writeStringAsFile(content: String, append: Boolean = false): Boolean {
+    if (!createOrExistsFile()) return false
 
-    BufferedWriter(FileWriter(file, append)).use {
+    BufferedWriter(FileWriter(this, append)).use {
         it.write(content)
         return true
     }
@@ -394,24 +366,20 @@ fun writeStringAsFile(file: File, content: String, append: Boolean = false): Boo
  */
 fun writeStringAsFile(filePath: String, content: String, append: Boolean = false): Boolean {
     val file = getFileByPath(filePath)
-    file?.let {
-        return writeStringAsFile(it, content, append)
-    }
-    return false
+    return file?.writeStringAsFile(content, append) ?: false
 }
 
 /**
  * 将输入流写入文件
  *
- * @param file
  * @param inputStream
  * @param append
  * @return true  false
  */
-fun writeISAsFile(file: File, inputStream: InputStream, append: Boolean = false): Boolean {
-    if (!createOrExistsFile(file)) return false
+fun File.writeISAsFile(inputStream: InputStream, append: Boolean = false): Boolean {
+    if (!createOrExistsFile()) return false
 
-    BufferedOutputStream(FileOutputStream(file, append)).use {
+    BufferedOutputStream(FileOutputStream(this, append)).use {
         inputStream.copyTo(it)
         return true
     }
@@ -428,24 +396,20 @@ fun writeISAsFile(file: File, inputStream: InputStream, append: Boolean = false)
 fun writeISAsFile(filePath: String, inputStream: InputStream, append: Boolean = false): Boolean {
     val file = getFileByPath(filePath)
 
-    file?.let {
-        return writeISAsFile(file, inputStream, append)
-    }
-    return false
+    return file?.writeISAsFile(inputStream, append) ?: false
 }
 
 /**
  * 读取文件到字符串中
  *
- * @param file    文件路径
  * @param charsetName 编码格式
  * @return 字符串
  */
-fun readFileAsString(file: File, charsetName: String = ""): String {
-    if (!isFileExists(file)) return ""
+fun File.readFileAsString(charsetName: String = ""): String {
+    if (!isFileExists()) return ""
     val reader: BufferedReader =
-            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(file))) else
-                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
+            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(this))) else
+                BufferedReader(InputStreamReader(FileInputStream(this), charsetName))
 
     val sb = StringBuilder()
     reader.forEachLine {
@@ -464,24 +428,20 @@ fun readFileAsString(file: File, charsetName: String = ""): String {
  */
 fun readFileAsString(filePath: String, charsetName: String = ""): String {
     val file = getFileByPath(filePath)
-    file?.let {
-        return readFileAsString(file, charsetName)
-    }
-    return ""
+    return file?.readFileAsString(charsetName) ?: ""
 }
 
 /**
  * 读取文件到字符串列表中
  * Do not use this function for huge files.
- * @param file
  * @param charsetName
  * @return List<String>
  */
-fun readFileAsList(file: File, charsetName: String = ""): List<String> {
-    if (!isFileExists(file)) return emptyList()
+fun File.readFileAsList(charsetName: String = ""): List<String> {
+    if (!isFileExists()) return emptyList()
     val reader: BufferedReader =
-            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(file))) else
-                BufferedReader(InputStreamReader(FileInputStream(file), charsetName))
+            if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(this))) else
+                BufferedReader(InputStreamReader(FileInputStream(this), charsetName))
     return reader.readLines()
 }
 
@@ -494,10 +454,7 @@ fun readFileAsList(file: File, charsetName: String = ""): List<String> {
  */
 fun readFileAsList(filePath: String, charsetName: String = ""): List<String> {
     val file = getFileByPath(filePath)
-    file?.let {
-        return readFileAsList(file, charsetName)
-    }
-    return emptyList()
+    return file?.readFileAsList(charsetName) ?: emptyList()
 }
 
 /*
@@ -508,28 +465,27 @@ fun readFileAsList(filePath: String, charsetName: String = ""): List<String> {
 /**
  * 复制或移动目录（默认为复制目录）
  *
- * @param srcDir
  * @param destDir
  * @param isMove default false
  */
-fun copyOrMoveDir(srcDir: File, destDir: File, isMove: Boolean = false): Boolean {
-    val srcPath = srcDir.path + File.separator
+fun File.copyOrMoveDir(destDir: File, isMove: Boolean = false): Boolean {
+    val srcPath = path + File.separator
     val destPath = destDir.path + File.separator
     if (destPath.contains(srcPath)) return false
-    if (!srcDir.exists() || !srcDir.isDirectory) return false
-    if (!createOrExistsDir(destDir)) return false
+    if (!exists() || !isDirectory) return false
+    if (!destDir.createOrExistsDir()) return false
 
-    val files = srcDir.listFiles()
+    val files = listFiles()
     files?.forEach {
         val destFile = File(destPath + it.name)
         if (it.isFile) {
-            if (!copyOrMoveFile(it, destFile, isMove)) return false
+            if (!it.copyOrMoveFile(destFile, isMove)) return false
         } else if (it.isDirectory) {
-            if (!copyOrMoveDir(it, destFile, isMove)) return false
+            if (!copyOrMoveDir(destFile, isMove)) return false
         }
     }
 
-    return !isMove || deleteDir(srcDir)
+    return !isMove || deleteDir()
 }
 
 /**
@@ -543,7 +499,7 @@ fun copyOrMoveDir(srcDirPath: String, destDirPath: String, isMove: Boolean = fal
     val srcDirFile = getFileByPath(srcDirPath)
     val destDirFile = getFileByPath(destDirPath)
     return if (srcDirFile != null && destDirFile != null) {
-        copyOrMoveDir(srcDirFile, destDirFile, isMove)
+        srcDirFile.copyOrMoveDir(destDirFile, isMove)
     } else {
         false
     }
@@ -552,18 +508,17 @@ fun copyOrMoveDir(srcDirPath: String, destDirPath: String, isMove: Boolean = fal
 /**
  * 复制或移动文件（默认为复制文件）
  *
- * @param srcFile
  * @param destFile
  * @param isMove default false
  */
-fun copyOrMoveFile(srcFile: File, destFile: File, isMove: Boolean = false): Boolean {
-    if (!srcFile.exists() || !srcFile.isFile) return false
+fun File.copyOrMoveFile(destFile: File, isMove: Boolean = false): Boolean {
+    if (!exists() || !isFile) return false
     if (!destFile.exists() || !destFile.isFile) return false
 
-    if (!createOrExistsDir(destFile.parentFile)) return false
+    if (parentFile?.createOrExistsDir() != true) return false
 
     return try {
-        writeISAsFile(destFile, FileInputStream(srcFile)) && !(isMove && !deleteFile(srcFile))
+        destFile.writeISAsFile(FileInputStream(this)) && !(isMove && !deleteFile())
     } catch (e: FileNotFoundException) {
         e.printStackTrace()
         false
@@ -581,7 +536,7 @@ fun copyOrMoveFile(srcPath: String, destPath: String, isMove: Boolean = false): 
     val srcFile = getFileByPath(srcPath)
     val destFile = getFileByPath(destPath)
     return if (srcFile != null && destFile != null) {
-        copyOrMoveFile(srcFile, destFile, isMove)
+        srcFile.copyOrMoveFile(destFile, isMove)
     } else {
         false
     }
@@ -591,24 +546,23 @@ fun copyOrMoveFile(srcPath: String, destPath: String, isMove: Boolean = false): 
 /**
  * 删除文件夹
  *
- * @param dir
  * @return true  false
  *
  */
-fun deleteDir(dir: File): Boolean {
-    if (!dir.exists()) return true
-    if (!dir.isDirectory) return false
+fun File.deleteDir(): Boolean {
+    if (!exists()) return true
+    if (!isDirectory) return false
 
-    val files = dir.listFiles()
+    val files = listFiles()
     files?.forEach {
         if (it.isFile) {
             if (!it.delete()) return false
         } else if (it.isDirectory) {
-            if (!deleteDir(it)) return false
+            if (!deleteDir()) return false
         }
     }
 
-    return dir.delete()
+    return delete()
 }
 
 /**
@@ -620,26 +574,23 @@ fun deleteDir(dir: File): Boolean {
  */
 fun deleteDir(dirPath: String): Boolean {
     val file = getFileByPath(dirPath)
-    file?.let { return deleteDir(file) }
-    return false
+    return file?.deleteDir() ?: false
 }
 
 /**
  * 删除文件
  *
- * @param file
  * @return true  false
  */
-fun deleteFile(file: File): Boolean = !file.exists() || (file.isFile && file.delete())
+fun File.deleteFile(): Boolean = !exists() || (isFile && delete())
 
 /**
  * 删除文件
  *
- * @param file
+ * @param filePath
  * @return true  false
  */
 fun deleteFile(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    file?.let { return deleteFile(file) }
-    return false
+    return file?.deleteFile() ?: false
 }

@@ -11,6 +11,7 @@ import android.view.View
 /**
  * Created by zyyoona7 on 2017/8/26.
  * 资源相关的扩展函数
+ *
  */
 
 /*
@@ -19,6 +20,8 @@ import android.view.View
 fun Context.loadColor(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
 
 fun Context.loadDrawable(@DrawableRes id: Int): Drawable = ContextCompat.getDrawable(this, id)
+//todo assert resources and other
+
 
 /*
   ---------- Fragment ----------

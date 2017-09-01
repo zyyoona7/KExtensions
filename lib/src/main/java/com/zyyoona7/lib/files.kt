@@ -125,7 +125,7 @@ fun getFileByPath(filePath: String): File? = if (filePath.isBlank()) null else F
  * 判断文件是否存在
  *
  */
-fun File.isFileExists(): Boolean = exists() && isFile
+val File.isFileExists: Boolean get() = exists() && isFile
 
 /**
  * 判断文件是否存在
@@ -134,14 +134,14 @@ fun File.isFileExists(): Boolean = exists() && isFile
  */
 fun isFileExists(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    return file?.isFileExists() ?: false
+    return file?.isFileExists ?: false
 }
 
 /**
  * 判断文件夹是否存在
  *
  */
-fun File.isDirExists(): Boolean = exists() && isDirectory
+val File.isDirExists: Boolean get() = exists() && isDirectory
 
 /**
  * 判断文件夹是否存在
@@ -150,7 +150,7 @@ fun File.isDirExists(): Boolean = exists() && isDirectory
  */
 fun isDirExists(filePath: String): Boolean {
     val file = getFileByPath(filePath)
-    return file?.isDirExists() ?: false
+    return file?.isDirExists ?: false
 }
 
 /**
@@ -206,10 +206,8 @@ fun createOrExistsFile(filePath: String): Boolean {
  *
  * @return 文件大小 单位：B、KB、MB、GB
  */
-fun File.getDirSize(): String {
-    val len = getDirLength()
-    return if (len == -1L) "" else byte2FitMemorySize(len)
-}
+val File.dirSize: String
+    get() = if (dirLength == -1L) "" else byte2FitMemorySize(dirLength)
 
 /**
  * 获取文件夹目录大小
@@ -227,15 +225,16 @@ fun getDirSize(dirPath: String): String {
  *
  * @return 目录长度
  */
-fun File.getDirLength(): Long {
-    if (!isDirExists()) return -1
-    var len: Long = 0
-    val files: Array<File>? = listFiles()
-    files?.forEach {
-        len += if (it.isDirectory) it.getDirLength() else it.length()
+val File.dirLength: Long
+    get() {
+        if (!isDirExists) return -1
+        var len: Long = 0
+        val files: Array<File>? = listFiles()
+        files?.forEach {
+            len += if (it.isDirectory) it.dirLength else it.length()
+        }
+        return len
     }
-    return len
-}
 
 /**
  * 获取目录长度
@@ -245,7 +244,7 @@ fun File.getDirLength(): Long {
  */
 fun getDirLength(dirPath: String): Long {
     val dir = getFileByPath(dirPath)
-    return dir?.getDirLength() ?: -1
+    return dir?.dirLength ?: -1
 }
 
 /**
@@ -253,10 +252,8 @@ fun getDirLength(dirPath: String): Long {
  *
  * @return 文件大小 单位：B、KB、MB、GB
  */
-fun File.getFileSize(): String {
-    val len = getFileLength()
-    return if (len == -1L) "" else byte2FitMemorySize(len)
-}
+val File.fileSize: String
+    get() = if (fileLength == -1L) "" else byte2FitMemorySize(fileLength)
 
 /**
  * 获取文件大小
@@ -274,7 +271,7 @@ fun getFileSize(filePath: String): String {
  *
  * @return 文件长度
  */
-fun File.getFileLength(): Long = if (!isFileExists()) -1 else length()
+val File.fileLength: Long get() = if (!isFileExists) -1 else length()
 
 /**
  * 获取文件长度
@@ -284,7 +281,7 @@ fun File.getFileLength(): Long = if (!isFileExists()) -1 else length()
  */
 fun getFileLength(filePath: String): Long {
     val file = getFileByPath(filePath)
-    return file?.getFileLength() ?: -1
+    return file?.fileLength ?: -1
 }
 
 /**
@@ -308,7 +305,7 @@ private fun byte2FitMemorySize(byteNum: Long): String = when {
  *
  * @return 最长目录
  */
-fun File.getDirName(): String = getDirName(path)
+val File.dirName: String get() = getDirName(path)
 
 /**
  * 获取全路径中的最长目录
@@ -324,7 +321,7 @@ fun getDirName(filePath: String): String =
  *
  * @return 文件名
  */
-fun File.getFileName(): String = getFileName(path)
+val File.fileName: String get() = getFileName(path)
 
 /**
  * 获取全路径中的文件名
@@ -406,7 +403,7 @@ fun writeISAsFile(filePath: String, inputStream: InputStream, append: Boolean = 
  * @return 字符串
  */
 fun File.readFileAsString(charsetName: String = ""): String {
-    if (!isFileExists()) return ""
+    if (!isFileExists) return ""
     val reader: BufferedReader =
             if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(this))) else
                 BufferedReader(InputStreamReader(FileInputStream(this), charsetName))
@@ -438,7 +435,7 @@ fun readFileAsString(filePath: String, charsetName: String = ""): String {
  * @return List<String>
  */
 fun File.readFileAsList(charsetName: String = ""): List<String> {
-    if (!isFileExists()) return emptyList()
+    if (!isFileExists) return emptyList()
     val reader: BufferedReader =
             if (charsetName.isBlank()) BufferedReader(InputStreamReader(FileInputStream(this))) else
                 BufferedReader(InputStreamReader(FileInputStream(this), charsetName))

@@ -3,8 +3,11 @@ package com.zyyoona7.lib
 import android.app.ActivityManager
 import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import java.io.File
+
 
 /**
  * Created by zyyoona7 on 2017/8/28.
@@ -44,6 +47,13 @@ fun Context.getVersionCode(pkgName: String = packageName): Int {
         e.printStackTrace()
         -1
     }
+}
+
+fun Context.installApp(file: File, authority: String, writeEnable: Boolean) {
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    setIntentDataAndType(intent, "application/vnd.android.package-archive", file, authority, writeEnable)
+    startActivity(intent)
 }
 
 /**
@@ -93,6 +103,10 @@ fun Fragment.getVersionCode(pkgName: String = activity.packageName): Int {
     return activity.getVersionCode(pkgName)
 }
 
+fun Fragment.installApp(file: File, authority: String, writeEnable: Boolean) {
+    activity.installApp(file, authority, writeEnable)
+}
+
 fun Fragment.isInstallApp(pkgName: String): Boolean {
     return activity.isInstallApp(pkgName)
 }
@@ -111,6 +125,10 @@ fun android.support.v4.app.Fragment.getVersionName(pkgName: String = activity.pa
 
 fun android.support.v4.app.Fragment.getVersionCode(pkgName: String = activity.packageName): Int {
     return activity.getVersionCode(pkgName)
+}
+
+fun android.support.v4.app.Fragment.installApp(file: File, authority: String, writeEnable: Boolean) {
+    activity.installApp(file, authority, writeEnable)
 }
 
 fun android.support.v4.app.Fragment.isInstallApp(pkgName: String): Boolean {

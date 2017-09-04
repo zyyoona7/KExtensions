@@ -1,5 +1,6 @@
 package com.zyyoona7.kextensions
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -78,12 +79,20 @@ class MainActivity : AppCompatActivity() {
         val destFilePath = publicPictureDir + "/b.txt"
         createOrExistsFile(destFilePath)
         loge("copy finished ${copyOrMoveFile(download, destFilePath, true)}")
+        installApp()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 11223) {
             writeFile()
+        }
+    }
+
+    private fun installApp() {
+        val file = getFileByPath("$publicDownloadDir/app-debug.apk")
+        file?.let {
+            installApp(file, "a", false)
         }
     }
 }

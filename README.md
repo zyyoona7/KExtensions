@@ -14,6 +14,8 @@
   getVersionName()
   //获取App版本码
   getVersionCode()
+  //安装App
+  installApp(params)
   //判断App是否安装
   isInstallApp(pkgName)
   //判断App是否处于前台
@@ -86,6 +88,18 @@
   px2dip(value)
   //px转换为sp value类型为Int
   px2sp(value)
+  ```
+
+- **fileProviders.kt**：FileProvider相关扩展函数
+
+  作用范围：Context、Fragment
+
+  ```kotlin
+  //自行配置FileProvider
+  //获取对应的Uri 适配7.0+
+  getUriFromFile(file,authority)
+  //为Intent设置dataAndType 适配7.0+
+  setIntentDataAndType(intent,type,file,authority,writeEnable)
   ```
 
 - **files.kt**：文件相关的扩展函数
@@ -247,8 +261,14 @@
 - **resources.kt**：资源相关的扩展函数
 
   ```kotlin
+  //作用范围：Context、Fragment、View
   loadColor(colorRes)
   loadDrawable(drawableRes)
+  loadRaw(rawRes)
+  loadAsset(filName)
+  loadTypefaceFromAsset(fileName)
+  //作用范围：Any
+  loadTypefaceFromFile(filePath)
   ```
 
 - **systemService.kt**：需要通过 getSystemService() 获取的各种 manager

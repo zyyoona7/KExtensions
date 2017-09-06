@@ -8,7 +8,7 @@
 ### 依赖
 
 Step 1. Add the JitPack repository to your build file
-```groovy
+```gradle
 allprojects {
     repositories {
     ...
@@ -17,7 +17,7 @@ allprojects {
 }
 ```
 Step 2. Add the dependency
-```groovy
+```gradle
 dependencies {
     compile 'com.github.zyyoona7:KExtensions:v1.0.0'
 }

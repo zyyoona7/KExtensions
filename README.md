@@ -1,7 +1,27 @@
 # KExtensions
+[![](https://jitpack.io/v/zyyoona7/KExtensions.svg)](https://jitpack.io/#zyyoona7/KExtensions)
+
 ### 简介
 
  收集 Android 中常用的 Kotlin 扩展函数，代替 Java 工具类和部分基类代码。
+ 
+### 依赖
+
+Step 1. Add the JitPack repository to your build file
+```groovy
+allprojects {
+    repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+    }
+}
+```
+Step 2. Add the dependency
+```groovy
+dependencies {
+    compile 'com.github.zyyoona7:KExtensions:v1.0.0'
+}
+```
 
 ### 特性 & 使用
 

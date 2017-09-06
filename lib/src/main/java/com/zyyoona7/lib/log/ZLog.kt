@@ -58,18 +58,17 @@ object ZLog {
      * @param json
      */
     private fun formatJson(json: String): String {
-        try {
+        return try {
             val trimJson = json.trim()
-            if (trimJson.startsWith("{")) {
-                return JSONObject(trimJson).toString(4)
-            } else if (trimJson.startsWith("[")) {
-                return JSONArray(trimJson).toString(4)
+            when {
+                trimJson.startsWith("{") -> JSONObject(trimJson).toString(4)
+                trimJson.startsWith("[") -> JSONArray(trimJson).toString(4)
+                else -> trimJson
             }
         } catch (e: JSONException) {
-            return e.printStackTrace().toString()
+            e.printStackTrace().toString()
         }
 
-        return ""
     }
 
     /**
@@ -132,14 +131,10 @@ object ZLog {
      * @param element
      * @param customTag
      */
-    private fun handleTag(element: StackTraceElement, customTag: String): String {
-        if (customTag.isNotBlank()) {
-            return customTag
-        }
-        if (logGlobalTag.isNotBlank()) {
-            return logGlobalTag
-        }
-        return element.className.substringAfterLast(".")
+    private fun handleTag(element: StackTraceElement, customTag: String): String = when {
+        customTag.isNotBlank() -> customTag
+        logGlobalTag.isNotBlank() -> logGlobalTag
+        else -> element.className.substringAfterLast(".")
     }
 
     /**

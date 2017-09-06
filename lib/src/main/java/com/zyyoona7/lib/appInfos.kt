@@ -49,6 +49,12 @@ fun Context.getVersionCode(pkgName: String = packageName): Int {
     }
 }
 
+/**
+ * 安装app
+ * @param file
+ * @param authority fileProvider authority
+ * @param writeEnable
+ */
 fun Context.installApp(file: File, authority: String, writeEnable: Boolean) {
     val intent = Intent(Intent.ACTION_VIEW)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

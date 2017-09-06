@@ -1,16 +1,22 @@
 package com.zyyoona7.kextensions
 
+import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import android.os.Environment.getExternalStorageDirectory
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
+import android.widget.Button
 import com.zyyoona7.lib.*
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
     val tag = "MainActivity"
+
+    lateinit var btnHello:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,12 +52,12 @@ class MainActivity : AppCompatActivity() {
 //        loge("path=$download \nFile=${getFileName(download)}")
 //
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 11223)
-        } else {
-            writeFile()
-        }
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                != PackageManager.PERMISSION_GRANTED) {
+
+//        } else {
+//            writeFile()
+//        }
 
         val cal = Calendar.getInstance()
 //        cal.add(Calendar.HOUR_OF_DAY, -25)
@@ -59,6 +65,12 @@ class MainActivity : AppCompatActivity() {
 //        loge(cal.timeInMillis.formatAgoStyleForWeibo())
         cal.add(Calendar.DATE, 2)
         loge("day number of week = ${cal.timeInMillis.dayOfWeek}")
+
+        btnHello=findViewById(R.id.btn_hello) as Button
+        btnHello.setOnClickListener{
+            requestPermission(arrayOf(Manifest.permission.CAMERA)
+                    , 11223)
+        }
     }
 
     private fun writeFile() {
@@ -79,13 +91,35 @@ class MainActivity : AppCompatActivity() {
         val destFilePath = publicPictureDir + "/b.txt"
         createOrExistsFile(destFilePath)
         loge("copy finished ${copyOrMoveFile(download, destFilePath, true)}")
-        installApp()
+//        installApp()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 11223) {
-            writeFile()
+//            writeFile()
+            handlePermissionResult(permissions, grantResults,{
+                loge("permissions granted ${isPermissionGranted(Manifest.permission.CAMERA)}")
+                takePhotoNoCompress()
+            },{
+                loge("permissions denied ${arePermissionAlwaysDenied(*permissions)}")
+            })
+        }
+    }
+
+    private fun takePhotoNoCompress() {
+
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            val filename = SimpleDateFormat("yyyyMMdd-HHmmss", Locale.CHINA)
+                    .format(Date()) + ".png"
+            val file = File(getExternalStorageDirectory(), filename)
+//            mCurrentPhotoPath = file.absolutePath
+
+            val fileUri = getUriFromFile( file)
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri)
+            startActivityForResult(takePictureIntent, 12345)
         }
     }
 

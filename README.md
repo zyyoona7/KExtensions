@@ -4,7 +4,7 @@
 ### 简介
 
  收集 Android 中常用的 Kotlin 扩展函数，代替 Java 工具类和部分基类代码。
- 
+
 ### 依赖
 
 Step 1. Add the JitPack repository to your build file
@@ -278,7 +278,27 @@ dependencies {
   networkType
   ```
 
-- **resources.kt**：资源相关的扩展函数
+- **permissions.kt**：动态权限相关扩展函数
+
+  ```kotlin
+  //作用范围：Context、Fragment 单个权限是否已经授权
+  isPermissionGranted(permission)
+  //作用范围：Context、Fragment 多个权限是否已经授权
+  arePermissionGranted(permissions)
+  //作用范围：Context、Fragment 单个权限是否被拒绝或不再提示
+  isPermissionAlwaysDenied(permission)
+  //作用范围：Context、Fragment 多个权限是否被拒绝或不再提示
+  arePermissionAlwaysDenied(permission)
+  //作用范围：Activity、Fragment 请求[permissions]授权
+  requestPermission(permissionsArray,requestCode)
+  //作用范围：Activity、Fragment 带解释的请求[permissions]授权
+  requestPermissionWithRationale(permissionsArray,requestCode,rationaleLamb)
+
+  //作用范围：Any 处理请求权限结果
+  handlePermissionResult(params)
+  ```
+
+- **resources.kt**：资源相关扩展函数
 
   ```kotlin
   //作用范围：Context、Fragment、View

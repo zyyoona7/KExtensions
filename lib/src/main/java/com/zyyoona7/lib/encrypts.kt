@@ -1,12 +1,16 @@
 package com.zyyoona7.lib
 
+import com.zyyoona7.lib.deriator.InsecureSHA1PRNGKeyDerivator
 import java.io.File
 import java.io.FileInputStream
 import java.security.DigestInputStream
 import java.security.InvalidKeyException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import javax.crypto.Cipher
 import javax.crypto.Mac
+import javax.crypto.SecretKey
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 
@@ -20,19 +24,26 @@ import javax.crypto.spec.SecretKeySpec
 
 /**
  * ByteArray转换成16进制字符串
- *
+ * https://stackoverflow.com/a/21178195/8546297
  */
 fun ByteArray.toHex(): String {
-    val sb = StringBuilder()
-    this.forEach {
-        val temp = Integer.toHexString(it.toInt() and 0xff)
-        if (temp.length == 1) {
-            sb.append("0").append(temp)
-        } else {
-            sb.append(temp)
-        }
+    val result = StringBuilder()
+    forEach {
+        result.append(Character.forDigit((it.toInt() shr 4) and 0xF, 16))
+        result.append(Character.forDigit(it.toInt() and 0xF, 16))
     }
-    return sb.toString()
+    return result.toString().toUpperCase()
+}
+
+/**
+ * 16进制字符串转换成ByteArray
+ *
+ */
+fun String.hexToByteArray(): ByteArray {
+    val data = ByteArray(length / 2)
+    for (i in 0 until length step 2)
+        data[i / 2] = ((Character.digit(this[i], 16) shl 4) + Character.digit(this[i + 1], 16)).toByte()
+    return data
 }
 /*
   在密码学中，hash算法（散列函数）的作用主要是用于消息摘要和签名，换句话说，它主要用于对整个消息的完整性进行校验。
@@ -194,6 +205,88 @@ fun String.hmacSHA512(key: String): String = hmacFunc(this, "HmacSHA512", key)
 
   常见的对称加密算法有DES、3DES、AES、Blowfish、IDEA、RC5、RC6。
  */
+
+/*
+  ---------- AES 加密 兼容7.0以上 （https://android-developers.googleblog.com/2016/06/security-crypto-provider-deprecated-in.html）----------
+ */
+/**
+ * 生成SecretKey
+ *
+ * @param password  密钥
+ * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
+ */
+private fun deriveKeyInsecurely(password: String, keySizeInBytes: Int): SecretKey =
+        SecretKeySpec(InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(password.toByteArray(), keySizeInBytes), "AES")
+
+/**
+ * 获取AES加密后的ByteArray
+ *
+ * @param raw key的ByteArray
+ * @param clear 明文的ByteArray
+ * @param isEncrypt 是否是加密模式
+ */
+private fun encryptOrDecryptAES(raw: ByteArray, clear: ByteArray, transformation: String, isEncrypt: Boolean): ByteArray =
+        try {
+            val secretKeySpec = SecretKeySpec(raw, "AES")
+            val cipher = Cipher.getInstance(transformation)
+            cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, secretKeySpec, IvParameterSpec(kotlin.ByteArray(cipher.blockSize)))
+            cipher.doFinal(clear)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyArray<Byte>().toByteArray()
+        }
+
+/**
+ * AES加密成16进制字符串
+ *
+ * @param password  密钥
+ * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
+ * @param transformation 加密算法参数配置
+ */
+fun String.encryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
+    return result.toHex()
+}
+
+/**
+ * AES加密成Base64字符串
+ *
+ * @param password  密钥
+ * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
+ * @param transformation 加密算法参数配置
+ */
+fun String.encryptAES2Base64(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
+    return result.base64Encode()
+}
+
+/**
+ * 16进制字符串用AES解密
+ *
+ * @param password  密钥
+ * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
+ * @param transformation 加密算法参数配置
+ */
+fun String.decryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val result = encryptOrDecryptAES(rawKey, this.hexToByteArray(), transformation, false)
+    return String(result)
+}
+
+/**
+ * Base64字符串用AES解密
+ *
+ * @param password  密钥
+ * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
+ * @param transformation 加密算法参数配置
+ */
+fun String.decryptBase64AES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val result = encryptOrDecryptAES(rawKey, this.base64Decode().toByteArray(), transformation, false)
+    return String(result)
+}
 
 /*
   非对称加密算法：https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86

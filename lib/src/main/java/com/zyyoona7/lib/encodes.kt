@@ -24,6 +24,12 @@ import java.net.URLEncoder
 fun String.base64Encode(): String = Base64.encodeToString(this.toByteArray(), Base64.DEFAULT)
 
 /**
+ * Base64编码
+ *
+ */
+fun ByteArray.base64Encode(): String = Base64.encodeToString(this, Base64.DEFAULT)
+
+/**
  * Base64解码
  *
  */

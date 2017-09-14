@@ -102,7 +102,7 @@ inline fun <reified T : Service> Context.startService(extras: Bundle? = null) {
 /**
  *  send sms
  */
-inline fun Fragment.sendSMS(number: String, text: String = ""): Boolean = activity.sendSMS(number, text)
+fun Fragment.sendSMS(number: String, text: String = ""): Boolean = activity.sendSMS(number, text)
 
 /**
  * @param number
@@ -123,7 +123,7 @@ fun Context.sendSMS(number: String, text: String = ""): Boolean {
 /**
  * call phone
  */
-inline fun Fragment.makeCall(number: String): Boolean = activity.makeCall(number)
+fun Fragment.makeCall(number: String): Boolean = activity.makeCall(number)
 
 /**
  * @param number phone number
@@ -143,7 +143,7 @@ fun Context.makeCall(number: String): Boolean {
  * send email
  */
 
-inline fun Fragment.email(email: String, subject: String = "", text: String = "") = activity.email(email, subject, text)
+fun Fragment.email(email: String, subject: String = "", text: String = "") = activity.email(email, subject, text)
 
 /**
  * @param email
@@ -169,7 +169,7 @@ fun Context.email(email: String, subject: String = "", text: String = ""): Boole
 /**
  * shared
  */
-inline fun Fragment.share(text: String, subject: String = "") = activity.share(text, subject)
+fun Fragment.share(text: String, subject: String = "") = activity.share(text, subject)
 
 /**
  * @param text
@@ -192,7 +192,7 @@ fun Context.share(text: String, subject: String = ""): Boolean {
 /**
  * browse web
  */
-inline fun Fragment.browse(url: String, newTask: Boolean = false) = activity.browse(url, newTask)
+fun Fragment.browse(url: String, newTask: Boolean = false) = activity.browse(url, newTask)
 
 /**
  * @param url

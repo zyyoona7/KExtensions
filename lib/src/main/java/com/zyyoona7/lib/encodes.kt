@@ -4,6 +4,7 @@ import android.util.Base64
 import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
+import java.nio.charset.Charset
 
 /**
  * Created by zyyoona7 on 2017/9/12.
@@ -21,19 +22,29 @@ import java.net.URLEncoder
  * Base64编码
  *
  */
-fun String.base64Encode(): String = Base64.encodeToString(this.toByteArray(), Base64.DEFAULT)
+fun String.base64Encode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.encode(this.toByteArray(), Base64.DEFAULT), charset)
+
+fun String.base64Encode(): ByteArray = Base64.encode(this.toByteArray(), Base64.DEFAULT)
 
 /**
  * Base64编码
  *
  */
-fun ByteArray.base64Encode(): String = Base64.encodeToString(this, Base64.DEFAULT)
+fun ByteArray.base64Encode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.encode(this, Base64.DEFAULT), charset)
+
+fun ByteArray.base64Encode(): ByteArray = Base64.encode(this, Base64.DEFAULT)
 
 /**
  * Base64解码
  *
  */
-fun String.base64Decode(): String = String(Base64.decode(this, Base64.DEFAULT))
+fun String.base64Decode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.decode(this, Base64.DEFAULT),charset)
+
+fun String.base64Decode(): ByteArray = Base64.decode(this, Base64.DEFAULT)
+
+fun ByteArray.base64Decode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.decode(this, Base64.DEFAULT),charset)
+
+fun ByteArray.base64Decode(): ByteArray = Base64.decode(this, Base64.DEFAULT)
 
 /**
  * 文件Base64编码

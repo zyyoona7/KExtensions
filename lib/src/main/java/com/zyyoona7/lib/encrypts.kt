@@ -3,10 +3,11 @@ package com.zyyoona7.lib
 import com.zyyoona7.lib.deriator.InsecureSHA1PRNGKeyDerivator
 import java.io.File
 import java.io.FileInputStream
-import java.security.DigestInputStream
-import java.security.InvalidKeyException
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
+import java.security.*
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 import javax.crypto.Mac
 import javax.crypto.SecretKey
@@ -215,36 +216,37 @@ fun String.hmacSHA512(key: String): String = hmacFunc(this, "HmacSHA512", key)
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  */
-private fun deriveKeyInsecurely(password: String, keySizeInBytes: Int): SecretKey =
-        SecretKeySpec(InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(password.toByteArray(), keySizeInBytes), "AES")
+private fun deriveKeyInsecurely(password: String, keySizeInBytes: Int, encryptType: String = "AES"): SecretKey =
+        SecretKeySpec(InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(password.toByteArray(), keySizeInBytes), encryptType)
 
 /**
  * 获取AES加密后的ByteArray
  *
- * @param raw key的ByteArray
+ * @param raw 生成的密钥
  * @param clear 明文的ByteArray
+ * @param transformation 加密填充方式
  * @param isEncrypt 是否是加密模式
  */
-private fun encryptOrDecryptAES(raw: ByteArray, clear: ByteArray, transformation: String, isEncrypt: Boolean): ByteArray =
-        try {
-            val secretKeySpec = SecretKeySpec(raw, "AES")
-            val cipher = Cipher.getInstance(transformation)
-            cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, secretKeySpec, IvParameterSpec(kotlin.ByteArray(cipher.blockSize)))
-            cipher.doFinal(clear)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyArray<Byte>().toByteArray()
-        }
+private fun encryptOrDecryptAES(raw: Key, clear: ByteArray, transformation: String, isEncrypt: Boolean): ByteArray {
+    return try {
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, raw, IvParameterSpec(kotlin.ByteArray(cipher.blockSize)))
+        cipher.doFinal(clear)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
 
 /**
  * AES加密成16进制字符串
  *
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
- * @param transformation 加密算法参数配置
+ * @param transformation 加密填充方式
  */
 fun String.encryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
-    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
     return result.toHex()
 }
@@ -254,12 +256,12 @@ fun String.encryptAES(password: String, keySizeInBytes: Int = 32, transformation
  *
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
- * @param transformation 加密算法参数配置
+ * @param transformation 加密填充方式
  */
 fun String.encryptAES2Base64(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
-    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
-    return result.base64Encode()
+    return result.base64Encode2Str()
 }
 
 /**
@@ -267,10 +269,10 @@ fun String.encryptAES2Base64(password: String, keySizeInBytes: Int = 32, transfo
  *
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
- * @param transformation 加密算法参数配置
+ * @param transformation 加密填充方式
  */
 fun String.decryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
-    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.hexToByteArray(), transformation, false)
     return String(result)
 }
@@ -280,13 +282,86 @@ fun String.decryptAES(password: String, keySizeInBytes: Int = 32, transformation
  *
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
- * @param transformation 加密算法参数配置
+ * @param transformation 加密填充方式
  */
 fun String.decryptBase64AES(password: String, keySizeInBytes: Int = 32, transformation: String = "AES/CBC/PKCS5Padding"): String {
-    val rawKey = deriveKeyInsecurely(password, keySizeInBytes).encoded
-    val result = encryptOrDecryptAES(rawKey, this.base64Decode().toByteArray(), transformation, false)
+    val rawKey = deriveKeyInsecurely(password, keySizeInBytes)
+    val result = encryptOrDecryptAES(rawKey, this.base64Decode(), transformation, false)
     return String(result)
 }
+
+/*
+  ---------- DES加密 ----------
+ */
+private val ivBytes = "01020304".toByteArray()
+
+/**
+ * 获取DES加密后的ByteArray
+ *
+ * @param raw 生成的密钥
+ * @param clear 明文的ByteArray
+ * @param transformation 加密填充方式
+ * @param isEncrypt 是否是加密模式
+ */
+private fun encryptOrDecryptDES(raw: Key, clear: ByteArray, transformation: String, isEncrypt: Boolean): ByteArray {
+    return try {
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, raw, IvParameterSpec(ivBytes))
+        cipher.doFinal(clear)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
+
+/**
+ * DES加密成16进制字符串
+ *
+ * @param password 密钥
+ * @param transformation 加密填充方式
+ */
+fun String.encryptDES(password: String, transformation: String = "DES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, 8, "DES")
+    val result = encryptOrDecryptDES(rawKey, this.toByteArray(), transformation, true)
+    return result.toHex()
+}
+
+/**
+ * DES加密成Base64字符串
+ *
+ * @param password 密钥
+ * @param transformation 加密填充方式
+ */
+fun String.encryptDES2Base64(password: String, transformation: String = "DES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, 8, "DES")
+    val result = encryptOrDecryptDES(rawKey, this.toByteArray(), transformation, true)
+    return result.base64Encode2Str()
+}
+
+/**
+ * 6进制字符串用DES解密
+ *
+ * @param password
+ * @param transformation
+ */
+fun String.decryptDES(password: String, transformation: String = "DES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, 8, "DES")
+    val result = encryptOrDecryptDES(rawKey, this.hexToByteArray(), transformation, false)
+    return String(result)
+}
+
+/**
+ * Base64字符串用DES解密
+ *
+ * @param password
+ * @param transformation
+ */
+fun String.decryptBase64DES(password: String, transformation: String = "DES/CBC/PKCS5Padding"): String {
+    val rawKey = deriveKeyInsecurely(password, 8, "DES")
+    val result = encryptOrDecryptDES(rawKey, this.base64Decode(), transformation, false)
+    return String(result)
+}
+
 
 /*
   非对称加密算法：https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86
@@ -296,3 +371,127 @@ fun String.decryptBase64AES(password: String, keySizeInBytes: Int = 32, transfor
 
   常见的公钥加密算法有：RSA、ElGamal、背包算法、Rabin（RSA的特例）、迪菲－赫尔曼密钥交换协议中的公钥加密算法、椭圆曲线加密算法（英语：Elliptic Curve Cryptography, ECC）。
  */
+
+/*
+  ---------- RSA加密https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95 -----------
+ */
+
+/**
+ * 生成RSA的密钥对
+ *
+ * @param keyLength 密钥长度
+ */
+fun generateRSAKeyPair(keyLength: Int = 2048): KeyPair {
+    val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+    keyPairGenerator.initialize(keyLength)
+    return keyPairGenerator.genKeyPair()
+}
+
+/**
+ * 在生成的密钥对中获取公钥和私钥
+ *
+ * @param isPublicKey true 公钥 false 私钥
+ */
+fun getRSAKey(keyPair: KeyPair, isPublicKey: Boolean): ByteArray =
+        if (isPublicKey) (keyPair.public as RSAPublicKey).encoded else (keyPair.private as RSAPrivateKey).encoded
+
+/**
+ * 用私钥对信息生成数字签名
+ *
+ * @param privateKey
+ * @param algorithm 签名算法
+ *
+ * @return ByteArray
+ */
+fun String.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): String {
+    return try {
+        val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val privateKey = keyFactory.generatePrivate(pkcs8KeySpec)
+
+        val signature = Signature.getInstance(algorithm)
+        signature.initSign(privateKey)
+        signature.update(this.toByteArray())
+        signature.sign().base64Encode2Str()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+}
+
+/**
+ * 用私钥对信息生成数字签名
+ *
+ * @param privateKey
+ * @param algorithm 签名算法
+ *
+ * @return ByteArray
+ */
+fun ByteArray.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): String {
+    return try {
+        val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val privateKey = keyFactory.generatePrivate(pkcs8KeySpec)
+
+        val signature = Signature.getInstance(algorithm)
+        signature.initSign(privateKey)
+        signature.update(this)
+        signature.sign().base64Encode2Str()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+}
+
+/**
+ * 验证数字签名
+ * this为未加密的原始数据
+ *
+ * @param publicKey
+ * @param sign Base64 编码过的签名
+ * @param algorithm 签名算法
+ *
+ * @return
+ */
+fun String.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String = "MD5withRSA"): Boolean {
+    return try {
+        val x509KeySpec = X509EncodedKeySpec(publicKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val publicKey = keyFactory.generatePublic(x509KeySpec)
+
+        val signature = Signature.getInstance(algorithm)
+        signature.initVerify(publicKey)
+        signature.update(this.toByteArray())
+        signature.verify(sign.toByteArray().base64Decode())
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+
+/**
+ * 验证数字签名
+ * this为未加密的原始数据
+ *
+ * @param publicKey
+ * @param sign Base64 编码过的签名
+ * @param algorithm 签名算法
+ *
+ * @return
+ */
+fun ByteArray.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String = "MD5withRSA"): Boolean {
+    return try {
+        val x509KeySpec = X509EncodedKeySpec(publicKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val publicKey = keyFactory.generatePublic(x509KeySpec)
+
+        val signature = Signature.getInstance(algorithm)
+        signature.initVerify(publicKey)
+        signature.update(this)
+        signature.verify(sign.toByteArray().base64Decode())
+    } catch (e: Exception) {
+        e.printStackTrace()
+        false
+    }
+}
+

@@ -16,7 +16,7 @@ import android.view.View
  *
  * @param message the message text resource.
  */
-inline fun snackbar(view: View, @StringRes message: Int) = Snackbar
+ fun snackbar(view: View, @StringRes message: Int) = Snackbar
         .make(view, message, Snackbar.LENGTH_SHORT)
         .apply { show() }
 
@@ -25,7 +25,7 @@ inline fun snackbar(view: View, @StringRes message: Int) = Snackbar
  *
  * @param message the message text resource.
  */
-inline fun longSnackbar(view: View, @StringRes message: Int) = Snackbar
+ fun longSnackbar(view: View, @StringRes message: Int) = Snackbar
         .make(view, message, Snackbar.LENGTH_LONG)
         .apply { show() }
 
@@ -34,7 +34,7 @@ inline fun longSnackbar(view: View, @StringRes message: Int) = Snackbar
  *
  * @param message the message text.
  */
-inline fun snackbar(view: View, message: String) = Snackbar
+ fun snackbar(view: View, message: String) = Snackbar
         .make(view, message, Snackbar.LENGTH_SHORT)
         .apply { show() }
 
@@ -43,7 +43,7 @@ inline fun snackbar(view: View, message: String) = Snackbar
  *
  * @param message the message text.
  */
-inline fun longSnackbar(view: View, message: String) = Snackbar
+ fun longSnackbar(view: View, message: String) = Snackbar
         .make(view, message, Snackbar.LENGTH_LONG)
         .apply { show() }
 

@@ -20,46 +20,49 @@ import java.nio.charset.Charset
 
 /**
  * Base64编码
+ * https://stackoverflow.com/questions/17912119/is-there-any-difference-between-apaches-base64-encodebase64-and-androids-base6
  *
+ * Android 的Base64.DEFAULT 包括行终止符
+ * 想要和 Java 统一需要使用Base64.NO_WRAP
  */
-fun String.base64Encode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.encode(this.toByteArray(), Base64.DEFAULT), charset)
+fun String.base64Encode2Str(charset: Charset = Charsets.US_ASCII, flags: Int = Base64.NO_WRAP): String = String(Base64.encode(this.toByteArray(), flags), charset)
 
-fun String.base64Encode(): ByteArray = Base64.encode(this.toByteArray(), Base64.DEFAULT)
+fun String.base64Encode(flags: Int = Base64.NO_WRAP): ByteArray = Base64.encode(this.toByteArray(), flags)
 
 /**
  * Base64编码
  *
  */
-fun ByteArray.base64Encode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.encode(this, Base64.DEFAULT), charset)
+fun ByteArray.base64Encode2Str(charset: Charset = Charsets.US_ASCII, flags: Int = Base64.NO_WRAP): String = String(Base64.encode(this, flags), charset)
 
-fun ByteArray.base64Encode(): ByteArray = Base64.encode(this, Base64.DEFAULT)
+fun ByteArray.base64Encode(flags: Int = Base64.NO_WRAP): ByteArray = Base64.encode(this, flags)
 
 /**
  * Base64解码
  *
  */
-fun String.base64Decode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.decode(this, Base64.DEFAULT),charset)
+fun String.base64Decode2Str(charset: Charset = Charsets.US_ASCII, flags: Int = Base64.NO_WRAP): String = String(Base64.decode(this, flags), charset)
 
-fun String.base64Decode(): ByteArray = Base64.decode(this, Base64.DEFAULT)
+fun String.base64Decode(flags: Int = Base64.NO_WRAP): ByteArray = Base64.decode(this, flags)
 
-fun ByteArray.base64Decode2Str(charset: Charset = Charsets.US_ASCII): String = String(Base64.decode(this, Base64.DEFAULT),charset)
+fun ByteArray.base64Decode2Str(charset: Charset = Charsets.US_ASCII, flags: Int = Base64.NO_WRAP): String = String(Base64.decode(this, flags), charset)
 
-fun ByteArray.base64Decode(): ByteArray = Base64.decode(this, Base64.DEFAULT)
+fun ByteArray.base64Decode(flags: Int = Base64.NO_WRAP): ByteArray = Base64.decode(this, flags)
 
 /**
  * 文件Base64编码
  */
-fun File.base64Encode(): String = Base64.encodeToString(this.readBytes(), Base64.DEFAULT)
+fun File.base64Encode(flags: Int = Base64.NO_WRAP): String = Base64.encodeToString(this.readBytes(), flags)
 
 /**
  * 字符串解码成文件类型
  *
  * @param filePath
  */
-fun String.base64Decode(filePath: String): File? {
+fun String.base64Decode(filePath: String, flags: Int = Base64.NO_WRAP): File? {
     val file = getFileByPath(filePath)
     file?.let {
-        val bytes = Base64.decode(this, Base64.DEFAULT)
+        val bytes = Base64.decode(this, flags)
         it.writeBytes(bytes)
     }
     return file

@@ -1,6 +1,7 @@
 package com.zyyoona7.lib
 
 import com.zyyoona7.lib.deriator.InsecureSHA1PRNGKeyDerivator
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.security.*
@@ -407,10 +408,10 @@ fun String.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): Str
     return try {
         val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
         val keyFactory = KeyFactory.getInstance("RSA")
-        val privateKey = keyFactory.generatePrivate(pkcs8KeySpec)
+        val priKey = keyFactory.generatePrivate(pkcs8KeySpec)
 
         val signature = Signature.getInstance(algorithm)
-        signature.initSign(privateKey)
+        signature.initSign(priKey)
         signature.update(this.toByteArray())
         signature.sign().base64Encode2Str()
     } catch (e: Exception) {
@@ -431,10 +432,10 @@ fun ByteArray.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): 
     return try {
         val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
         val keyFactory = KeyFactory.getInstance("RSA")
-        val privateKey = keyFactory.generatePrivate(pkcs8KeySpec)
+        val priKey = keyFactory.generatePrivate(pkcs8KeySpec)
 
         val signature = Signature.getInstance(algorithm)
-        signature.initSign(privateKey)
+        signature.initSign(priKey)
         signature.update(this)
         signature.sign().base64Encode2Str()
     } catch (e: Exception) {
@@ -457,10 +458,10 @@ fun String.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String =
     return try {
         val x509KeySpec = X509EncodedKeySpec(publicKey)
         val keyFactory = KeyFactory.getInstance("RSA")
-        val publicKey = keyFactory.generatePublic(x509KeySpec)
+        val pubKey = keyFactory.generatePublic(x509KeySpec)
 
         val signature = Signature.getInstance(algorithm)
-        signature.initVerify(publicKey)
+        signature.initVerify(pubKey)
         signature.update(this.toByteArray())
         signature.verify(sign.toByteArray().base64Decode())
     } catch (e: Exception) {
@@ -483,10 +484,10 @@ fun ByteArray.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: Strin
     return try {
         val x509KeySpec = X509EncodedKeySpec(publicKey)
         val keyFactory = KeyFactory.getInstance("RSA")
-        val publicKey = keyFactory.generatePublic(x509KeySpec)
+        val pubKey = keyFactory.generatePublic(x509KeySpec)
 
         val signature = Signature.getInstance(algorithm)
-        signature.initVerify(publicKey)
+        signature.initVerify(pubKey)
         signature.update(this)
         signature.verify(sign.toByteArray().base64Decode())
     } catch (e: Exception) {
@@ -495,3 +496,315 @@ fun ByteArray.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: Strin
     }
 }
 
+
+private fun rsaEncryptOrDecryptByPublicKey(data: ByteArray, publicKey: ByteArray, isEncrypt: Boolean, transformation: String = "RSA"): ByteArray {
+    return try {
+        //获取公钥
+        val x509KeySpec = X509EncodedKeySpec(publicKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val pubKey = keyFactory.generatePublic(x509KeySpec)
+
+        //加/解密
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, pubKey)
+        return cipher.doFinal(data)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
+
+/**
+ * RSA公钥加密
+ *
+ * @param publicKey
+ * @param transformation
+ */
+fun String.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPublicKey(this.toByteArray(), publicKey, true, transformation)
+
+/**
+ * RSA公钥加密
+ *
+ * @param publicKey
+ * @param transformation
+ */
+fun ByteArray.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPublicKey(this, publicKey, true, transformation)
+
+/**
+ * RSA公钥解密
+ *
+ * @param publicKey
+ * @param transformation
+ */
+fun String.rsaDecryptByPublicKey(publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPublicKey(this.toByteArray(), publicKey, false, transformation)
+
+/**
+ * RSA公钥解密
+ *
+ * @param publicKey
+ * @param transformation
+ */
+fun ByteArray.rsaDecryptByPublicKey(publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPublicKey(this, publicKey, false, transformation)
+
+private fun rsaEncryptOrDecryptByPrivateKey(data: ByteArray, privateKey: ByteArray, isEncrypt: Boolean, transformation: String = "RSA"): ByteArray {
+    return try {
+        //获取私钥
+        val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val priKey = keyFactory.generatePrivate(pkcs8KeySpec)
+
+        //加/解密
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, priKey)
+        return cipher.doFinal(data)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
+
+/**
+ * RSA私钥加密
+ *
+ * @param privateKey
+ * @param transformation
+ */
+fun String.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPrivateKey(this.toByteArray(), privateKey, true, transformation)
+
+/**
+ * RSA私钥加密
+ *
+ * @param privateKey
+ * @param transformation
+ */
+fun ByteArray.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPrivateKey(this, privateKey, true, transformation)
+
+/**
+ * RSA私钥解密
+ *
+ * @param privateKey
+ * @param transformation
+ */
+fun String.rsaDecryptByPrivateKey(privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPrivateKey(this.toByteArray(), privateKey, false, transformation)
+
+/**
+ * RSA私钥解密
+ *
+ * @param privateKey
+ * @param transformation
+ */
+fun ByteArray.rsaDecryptByPrivateKey(privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaEncryptOrDecryptByPrivateKey(this, privateKey, false, transformation)
+
+
+/*
+   Java 默认的 RSA 加密实现不允许明文长度超过密钥长度减去 11(单位是字节，也就是 byte)。
+   也就是说，如果我们定义的密钥(我们可以通过 java.security.KeyPairGenerator.initialize(int keysize)
+   来定义密钥长度)长度为 1024(单位是位，也就是 bit)，生成的密钥长度就是 1024位 / 8位/字节 = 128字节，
+   那么我们需要加密的明文长度不能超过 128字节 - 11 字节 = 117字节。也就是说，我们最大能将 117 字节长度的明文进行加密，否则会出问题
+ */
+
+/**
+ * 获取最大的明文长度
+ *
+ * @param keyLength 密钥长度
+ */
+private fun getMaxCleartextLen(keyLength: Int): Int = keyLength / 8 - 11
+
+/**
+ * RSA使用公钥 分段加/解密
+ *
+ * @param keyLength
+ * @param data
+ * @param publicKey
+ * @param isEncrypt
+ * @param transformation
+ */
+private fun rsaSplitEncryptOrDecryptByPub(keyLength: Int, data: ByteArray, publicKey: ByteArray, isEncrypt: Boolean, transformation: String = "RSA"): ByteArray {
+    //分段明文长度
+    val cleartextLen = getMaxCleartextLen(keyLength)
+    //密钥长度
+    val keyLen = keyLength / 8
+    //计算分段加密的block数 (向上取整) ，如果余数非0，block数再加1
+    val blockSize = if (data.size % cleartextLen == 0) data.size / cleartextLen else data.size / cleartextLen + 1
+    // 输出buffer, 大小为blockSize个keyLen
+    val outBuffer = ByteArrayOutputStream(if (isEncrypt) blockSize * keyLen else blockSize * cleartextLen)
+    return try {
+        //获取公钥
+        val x509KeySpec = X509EncodedKeySpec(publicKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val pubKey = keyFactory.generatePublic(x509KeySpec)
+
+        //加/解密
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, pubKey)
+        outBuffer.use {
+            if (isEncrypt) {
+                for (offset in 0 until data.size step cleartextLen) {
+                    // block大小: blockSize 或剩余字节数
+                    val inputLen = if (data.size - offset > cleartextLen) cleartextLen else data.size - offset
+                    // 得到分段加密结果
+                    val encryptedBlock = cipher.doFinal(data, offset, inputLen)
+                    // 追加结果到输出buffer中
+                    outBuffer.write(encryptedBlock, 0, encryptedBlock.size)
+                }
+            } else {
+                for (offset in 0 until data.size step keyLen) {
+                    // block大小: keyLen 或剩余字节数
+                    val inputLen = if (data.size - offset > keyLen) keyLen else data.size - offset
+                    // 得到分段加密结果
+                    val decryptedBlock = cipher.doFinal(data, offset, inputLen)
+                    // 追加结果到输出buffer中
+                    outBuffer.write(decryptedBlock, 0, decryptedBlock.size)
+                }
+            }
+            return outBuffer.toByteArray()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
+
+/**
+ * RSA使用公钥 分段加密
+ *
+ * @param keyLength
+ * @param publicKey
+ * @param transformation
+ */
+fun String.rsaEncryptByPublicKey(keyLength: Int = 2048, publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPub(keyLength, this.toByteArray(), publicKey, true, transformation)
+
+/**
+ * RSA使用公钥 分段加密
+ *
+ * @param keyLength
+ * @param publicKey
+ * @param transformation
+ */
+fun ByteArray.rsaEncryptByPublicKey(keyLength: Int = 2048, publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPub(keyLength, this, publicKey, true, transformation)
+
+/**
+ * RSA使用公钥 分段解密
+ *
+ * @param keyLength
+ * @param publicKey
+ * @param transformation
+ */
+fun String.rsaDecryptByPublicKey(keyLength: Int = 2048, publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPub(keyLength, this.toByteArray(), publicKey, false, transformation)
+
+/**
+ * RSA使用公钥 分段解密
+ *
+ * @param keyLength
+ * @param publicKey
+ * @param transformation
+ */
+fun ByteArray.rsaDecryptByPublicKey(keyLength: Int = 2048, publicKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPub(keyLength, this, publicKey, false, transformation)
+
+/**
+ * RSA使用私钥 分段加/解密
+ *
+ * @param keyLength
+ * @param data
+ * @param privateKey
+ * @param isEncrypt
+ * @param transformation
+ */
+private fun rsaSplitEncryptOrDecryptByPri(keyLength: Int, data: ByteArray, privateKey: ByteArray, isEncrypt: Boolean, transformation: String = "RSA"): ByteArray {
+    //分段明文长度
+    val cleartextLen = getMaxCleartextLen(keyLength)
+    //密钥长度
+    val keyLen = keyLength / 8
+    //计算分段加密的block数 (向上取整) ，如果余数非0，block数再加1
+    val blockSize = if (data.size % cleartextLen == 0) data.size / cleartextLen else data.size / cleartextLen + 1
+    // 输出buffer
+    val outBuffer = ByteArrayOutputStream(if (isEncrypt) blockSize * keyLen else blockSize * cleartextLen)
+
+    return try {
+        //获取私钥
+        val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val priKey = keyFactory.generatePrivate(pkcs8KeySpec)
+
+        //加/解密
+        val cipher = Cipher.getInstance(transformation)
+        cipher.init(if (isEncrypt) Cipher.ENCRYPT_MODE else Cipher.DECRYPT_MODE, priKey)
+        outBuffer.use {
+            if (isEncrypt) {
+                for (offset in 0 until data.size step cleartextLen) {
+                    // block大小: blockSize 或剩余字节数
+                    val inputLen = if (data.size - offset > cleartextLen) cleartextLen else data.size - offset
+                    // 得到分段加密结果
+                    val encryptedBlock = cipher.doFinal(data, offset, inputLen)
+                    // 追加结果到输出buffer中
+                    outBuffer.write(encryptedBlock, 0, encryptedBlock.size)
+                }
+            } else {
+                for (offset in 0 until data.size step keyLen) {
+                    // block大小: keyLen 或剩余字节数
+                    val inputLen = if (data.size - offset > keyLen) keyLen else data.size - offset
+                    // 得到分段加密结果
+                    val decryptedBlock = cipher.doFinal(data, offset, inputLen)
+                    // 追加结果到输出buffer中
+                    outBuffer.write(decryptedBlock, 0, decryptedBlock.size)
+                }
+            }
+            return outBuffer.toByteArray()
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        emptyArray<Byte>().toByteArray()
+    }
+}
+
+/**
+ * RSA使用私钥 分段加密
+ *
+ * @param keyLength
+ * @param privateKey
+ * @param transformation
+ */
+fun String.rsaEncryptByPrivateKey(keyLength: Int = 2048, privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPri(keyLength, this.toByteArray(), privateKey, true, transformation)
+
+/**
+ * RSA使用私钥 分段加密
+ *
+ * @param keyLength
+ * @param privateKey
+ * @param transformation
+ */
+fun ByteArray.rsaEncryptByPPrivateKey(keyLength: Int = 2048, privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPri(keyLength, this, privateKey, true, transformation)
+
+/**
+ * RSA使用私钥 分段解密
+ *
+ * @param keyLength
+ * @param privateKey
+ * @param transformation
+ */
+fun String.rsaDecryptByPrivateKey(keyLength: Int = 2048, privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPri(keyLength, this.toByteArray(), privateKey, false, transformation)
+
+/**
+ * RSA使用私钥 分段解密
+ *
+ * @param keyLength
+ * @param privateKey
+ * @param transformation
+ */
+fun ByteArray.rsaDecryptByPrivateKey(keyLength: Int = 2048, privateKey: ByteArray, transformation: String = "RSA"): ByteArray =
+        rsaSplitEncryptOrDecryptByPri(keyLength, this, privateKey, false, transformation)

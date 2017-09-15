@@ -19,9 +19,10 @@ allprojects {
 Step 2. Add the dependency
 ```gradle
 dependencies {
-    compile 'com.github.zyyoona7:KExtensions:v1.0.0'
+    compile 'com.github.zyyoona7:KExtensions:VERSION_CODE'
 }
 ```
+最新的[VERSION_CODE](https://github.com/zyyoona7/KExtensions/releases)
 
 ### 特性 & 使用
 

@@ -111,6 +111,100 @@ dependencies {
   px2sp(value)
   ```
 
+- **encodes.kt**：编码/解码相关扩展函数
+
+  ```kotlin
+  //作用范围：String、ByteArray、File
+  //Base64编码为ByteArray类型
+  base64Encode()
+  //Base64解码为ByteArray类型
+  base64Decode()
+
+  //作用范围：String、ByteArray
+  //Base64编码为String类型
+  base64Encode2Str()
+  //Base64解码为String类型
+  base64Decode2Str()
+
+  //作用范围：String
+  //url编码/解码
+  urlEncode()
+  urlDecode()
+  ```
+
+- **encrypts.kt**：加密/解密相关的扩展函数
+
+  ```kotlin
+  //ByteArray转换成16进制字符串
+  ByteArray.toHex()
+  //16进制字符串转换成ByteArray
+  String.hexToByteArray()
+
+  //md5加密
+  String.md5(salt: String = "")
+  //SHA1加密
+  String.sha1()
+  //SHA224加密
+  String.sha224()
+  //SHA256加密
+  String.sha256()
+  //SHA384加密
+  String.sha384()
+  //SHA512加密
+  String.sha512()
+  //获取HMAC-MD5 加密
+  String.hmacMD5(key: String)
+  //获取HMAC-SHA1 加密
+  String.hmacSHA1(key: String)
+  //获取HMAC-SHA224 加密
+  String.hmacSHA224(key: String)
+  //获取HMAC-SHA256 加密
+  String.hmacSHA256(key: String)
+  //获取HMAC-SHA384 加密
+  String.hmacSHA384(key: String)
+  //获取HMAC-SHA512 加密
+  String.hmacSHA512(key: String)
+
+  //对称加密
+  //AES加密成16进制字符串
+  String.encryptAES(password: String)
+  //AES加密成Base64字符串
+  String.encryptAES2Base64(password: String)
+  //16进制字符串用AES解密
+  String.decryptAES(password: String)
+  //Base64字符串用AES解密
+  String.decryptBase64AES(password: String)
+
+  //DES加密成16进制字符串
+  String.encryptDES(password: String)
+  //DES加密成Base64字符串
+  String.encryptDES2Base64(password: String)
+  //16进制字符串用DES解密
+  String.decryptDES(password: String)
+  //Base64字符串用DES解密
+  String.decryptBase64DES(password: String)
+
+  //非对称加密
+  //生成RSA的密钥对
+  generateRSAKeyPair()
+  //在生成的密钥对中获取公钥和私钥
+  getRSAKey(keyPair: KeyPair, isPublicKey: Boolean)
+  //用私钥对信息生成数字签名
+  String.rsaSign(privateKey: ByteArray)
+  //验证数字签名
+  String.rsaVerifySign(publicKey: ByteArray, sign: String)
+  //RSA公钥加密/分段加密
+  String.rsaEncryptByPublicKey(publicKey: ByteArray)
+  //RSA公钥解密/分段解密
+  String.rsaDecryptByPublicKey(publicKey: ByteArray)
+  //RSA私钥加密/分段加密
+  String.rsaEncryptByPrivateKey(privateKey: ByteArray)
+  //RSA私钥解密/分段解密
+  String.rsaDecryptByPrivateKey(privateKey: ByteArray)
+  ```
+
+  ​
+
 - **fileProviders.kt**：FileProvider相关扩展函数
 
   作用范围：Context、Fragment

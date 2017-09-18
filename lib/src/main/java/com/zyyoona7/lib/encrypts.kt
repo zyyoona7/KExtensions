@@ -340,7 +340,7 @@ fun String.encryptDES2Base64(password: String, transformation: String = "DES/CBC
 }
 
 /**
- * 6进制字符串用DES解密
+ * 16进制字符串用DES解密
  *
  * @param password
  * @param transformation

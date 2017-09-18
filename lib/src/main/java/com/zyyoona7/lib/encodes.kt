@@ -9,7 +9,7 @@ import java.nio.charset.Charset
 /**
  * Created by zyyoona7 on 2017/9/12.
  *
- * 编码/解码相关拓展函数
+ * 编码/解码相关扩展函数
  */
 
 /*

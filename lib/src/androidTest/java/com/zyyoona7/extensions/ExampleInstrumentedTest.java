@@ -1,4 +1,4 @@
-package com.zyyoona7.lib;
+package com.zyyoona7.extensions;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

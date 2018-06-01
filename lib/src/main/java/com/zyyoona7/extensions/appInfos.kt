@@ -1,4 +1,4 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
 import android.app.ActivityManager
 import android.app.Fragment

@@ -1,4 +1,4 @@
-package com.zyyoona7.lib.deriator;
+package com.zyyoona7.extensions.deriator;
 
 /**
  * Stripped-down version of the SHA1PRNG provided by the Crypto provider.

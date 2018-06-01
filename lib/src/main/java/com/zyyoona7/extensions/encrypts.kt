@@ -1,6 +1,6 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
-import com.zyyoona7.lib.deriator.InsecureSHA1PRNGKeyDerivator
+import com.zyyoona7.extensions.deriator.InsecureSHA1PRNGKeyDerivator
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream

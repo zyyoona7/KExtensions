@@ -1,4 +1,4 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
 import android.util.Base64
 import java.io.File

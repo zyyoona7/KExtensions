@@ -1,4 +1,4 @@
-package com.zyyoona7.lib.log
+package com.zyyoona7.extensions.log
 
 import android.util.Log
 import org.json.JSONArray

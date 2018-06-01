@@ -1,6 +1,6 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
-import com.zyyoona7.lib.log.ZLog
+import com.zyyoona7.extensions.log.ZLog
 
 /**
  * Created by zyyoona7 on 2017/8/24.

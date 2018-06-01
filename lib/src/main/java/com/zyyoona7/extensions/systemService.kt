@@ -1,4 +1,4 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
 import android.accounts.AccountManager
 import android.annotation.SuppressLint

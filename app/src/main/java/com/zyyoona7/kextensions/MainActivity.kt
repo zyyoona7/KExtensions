@@ -7,7 +7,7 @@ import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
-import com.zyyoona7.lib.*
+import com.zyyoona7.extensions.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,7 +16,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     val tag = "MainActivity"
 
-    lateinit var btnHello:Button
+    lateinit var btnHello: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,25 +52,28 @@ class MainActivity : AppCompatActivity() {
 //        loge("path=$download \nFile=${getFileName(download)}")
 //
 
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
+        if (!isPermissionGranted(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermission(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 11223)
+        } else {
+            writeFile()
+        }
 
-//        } else {
-//            writeFile()
-//        }
-
-        val cal = Calendar.getInstance()
+//        val cal = Calendar.getInstance()
 //        cal.add(Calendar.HOUR_OF_DAY, -25)
 //        loge(cal.timeInMillis.formatAgoStyleForWeChat())
 //        loge(cal.timeInMillis.formatAgoStyleForWeibo())
-        cal.add(Calendar.DATE, 2)
-        loge("day number of week = ${cal.timeInMillis.dayOfWeek}")
-
-        btnHello=findViewById(R.id.btn_hello) as Button
-        btnHello.setOnClickListener{
-            requestPermission(arrayOf(Manifest.permission.CAMERA)
-                    , 11223)
-        }
+//        cal.add(Calendar.DATE, 2)
+//        loge("day number of week = ${cal.timeInMillis.dayOfWeek}")
+//
+//        btnHello=findViewById(R.id.btn_hello) as Button
+//        btnHello.setOnClickListener{
+//            requestPermission(arrayOf(Manifest.permission.CAMERA)
+//                    , 11223)
+//        }
+        val download = publicDownloadDir + "/a.txt"
+        val encodeStr = "123".base64Encode()
+        val data = "123"
+        val key = "45678910"
     }
 
     private fun writeFile() {
@@ -90,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         loge(readFileAsString(download))
         val destFilePath = publicPictureDir + "/b.txt"
         createOrExistsFile(destFilePath)
-        loge("copy finished ${copyOrMoveFile(download, destFilePath, true)}")
+        loge("copy finished ${copyOrMoveFile(download, destFilePath, false)}")
 //        installApp()
     }
 
@@ -98,10 +101,10 @@ class MainActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 11223) {
 //            writeFile()
-            handlePermissionResult(permissions, grantResults,{
+            handlePermissionResult(permissions, grantResults, {
                 loge("permissions granted ${isPermissionGranted(Manifest.permission.CAMERA)}")
                 takePhotoNoCompress()
-            },{
+            }, {
                 loge("permissions denied ${arePermissionAlwaysDenied(*permissions)}")
             })
         }
@@ -116,7 +119,7 @@ class MainActivity : AppCompatActivity() {
             val file = File(getExternalStorageDirectory(), filename)
 //            mCurrentPhotoPath = file.absolutePath
 
-            val fileUri = getUriFromFile( file)
+            val fileUri = getUriFromFile(file)
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri)
             startActivityForResult(takePictureIntent, 12345)

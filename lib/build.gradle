@@ -5,7 +5,7 @@ group='com.github.zyyoona7'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         minSdkVersion 16
@@ -25,8 +25,8 @@ android {
 }
 
 dependencies {
-    provided fileTree(dir: 'libs', include: ['*.jar'])
-    provided 'com.android.support:appcompat-v7:25.+'
-    provided 'com.android.support:design:25.+'
-    provided "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly 'com.android.support:appcompat-v7:25.+'
+    compileOnly 'com.android.support:design:25.+'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

@@ -1,4 +1,4 @@
-package com.zyyoona7.lib
+package com.zyyoona7.extensions
 
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar

@@ -121,6 +121,7 @@ private fun hashFuncForFile(type: String, inputStream: FileInputStream): String 
  *
  * @param salt 盐值
  */
+@JvmOverloads
 fun String.md5(salt: String = ""): String = hashFunc(ENCRYPT_MD5, this + salt)
 
 /**

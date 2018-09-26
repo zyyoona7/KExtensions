@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.zyyoona7'
+group = 'com.github.zyyoona7'
 
 android {
     compileSdkVersion compile_sdk_version
@@ -34,4 +34,6 @@ dependencies {
     compileOnly "com.android.support:appcompat-v7:$support_version"
     compileOnly "com.android.support:design:$support_version"
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api project(path: ':encrypts')
+
 }

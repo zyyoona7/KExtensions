@@ -61,7 +61,7 @@ fun ByteArray.toHex(): String {
         result.append(Character.forDigit((it.toInt() shr 4) and 0xF, 16))
         result.append(Character.forDigit(it.toInt() and 0xF, 16))
     }
-    return result.toString().toUpperCase()
+    return result.toString()
 }
 
 /**
@@ -244,6 +244,7 @@ fun String.hmacSHA512(key: String): String = hmacFunc(this, ENCRYPT_HMAC_SHA512,
  * @param password  密钥
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  */
+@JvmOverloads
 fun generateSecretKey(password: String, keySizeInBytes: Int, encryptType: String = ENCRYPT_AES): SecretKey =
         SecretKeySpec(InsecureSHA1PRNGKeyDerivator.deriveInsecureKey(password.toByteArray(), keySizeInBytes), encryptType)
 
@@ -282,6 +283,7 @@ fun initCipher(raw: Key, transformation: String, isEncrypt: Boolean): Cipher {
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.encryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = DEFAULT_AES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
@@ -295,6 +297,7 @@ fun String.encryptAES(password: String, keySizeInBytes: Int = 32, transformation
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.encryptAES2Base64(password: String, keySizeInBytes: Int = 32, transformation: String = DEFAULT_AES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.toByteArray(), transformation, true)
@@ -308,6 +311,7 @@ fun String.encryptAES2Base64(password: String, keySizeInBytes: Int = 32, transfo
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.decryptAES(password: String, keySizeInBytes: Int = 32, transformation: String = DEFAULT_AES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.hexToByteArray(), transformation, false)
@@ -321,6 +325,7 @@ fun String.decryptAES(password: String, keySizeInBytes: Int = 32, transformation
  * @param keySizeInBytes 密钥长度 需要*8  取值只能为 16 24 32 对应密钥长度为128、192、256
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.decryptBase64AES(password: String, keySizeInBytes: Int = 32, transformation: String = DEFAULT_AES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, keySizeInBytes)
     val result = encryptOrDecryptAES(rawKey, this.base64Decode(), transformation, false)
@@ -357,6 +362,7 @@ private fun encryptOrDecryptDES(raw: Key, clear: ByteArray, transformation: Stri
  * @param password 密钥
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.encryptDES(password: String, transformation: String = DEFAULT_DES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, 8, ENCRYPT_DES)
     val result = encryptOrDecryptDES(rawKey, this.toByteArray(), transformation, true)
@@ -369,6 +375,7 @@ fun String.encryptDES(password: String, transformation: String = DEFAULT_DES_TRA
  * @param password 密钥
  * @param transformation 加密填充方式
  */
+@JvmOverloads
 fun String.encryptDES2Base64(password: String, transformation: String = DEFAULT_DES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, 8, ENCRYPT_DES)
     val result = encryptOrDecryptDES(rawKey, this.toByteArray(), transformation, true)
@@ -381,6 +388,7 @@ fun String.encryptDES2Base64(password: String, transformation: String = DEFAULT_
  * @param password
  * @param transformation
  */
+@JvmOverloads
 fun String.decryptDES(password: String, transformation: String = DEFAULT_DES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, 8, ENCRYPT_DES)
     val result = encryptOrDecryptDES(rawKey, this.hexToByteArray(), transformation, false)
@@ -393,6 +401,7 @@ fun String.decryptDES(password: String, transformation: String = DEFAULT_DES_TRA
  * @param password
  * @param transformation
  */
+@JvmOverloads
 fun String.decryptBase64DES(password: String, transformation: String = DEFAULT_DES_TRANSFORMATION): String {
     val rawKey = generateSecretKey(password, 8, ENCRYPT_DES)
     val result = encryptOrDecryptDES(rawKey, this.base64Decode(), transformation, false)
@@ -418,6 +427,7 @@ fun String.decryptBase64DES(password: String, transformation: String = DEFAULT_D
  *
  * @param keyLength 密钥长度
  */
+@JvmOverloads
 fun generateRSAKeyPair(keyLength: Int = DEFAULT_RSA_KEY_LENGTH): KeyPair {
     val keyPairGenerator = KeyPairGenerator.getInstance(ENCRYPT_RSA)
     keyPairGenerator.initialize(keyLength)
@@ -440,6 +450,7 @@ fun getRSAKey(keyPair: KeyPair, isPublicKey: Boolean): ByteArray =
  *
  * @return ByteArray
  */
+@JvmOverloads
 fun String.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): String {
     return try {
         val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
@@ -464,6 +475,7 @@ fun String.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): Str
  *
  * @return ByteArray
  */
+@JvmOverloads
 fun ByteArray.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): String {
     return try {
         val pkcs8KeySpec = PKCS8EncodedKeySpec(privateKey)
@@ -490,6 +502,7 @@ fun ByteArray.rsaSign(privateKey: ByteArray, algorithm: String = "MD5withRSA"): 
  *
  * @return
  */
+@JvmOverloads
 fun String.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String = "MD5withRSA"): Boolean {
     return try {
         val x509KeySpec = X509EncodedKeySpec(publicKey)
@@ -516,6 +529,7 @@ fun String.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String =
  *
  * @return
  */
+@JvmOverloads
 fun ByteArray.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: String = "MD5withRSA"): Boolean {
     return try {
         val x509KeySpec = X509EncodedKeySpec(publicKey)
@@ -531,7 +545,6 @@ fun ByteArray.rsaVerifySign(publicKey: ByteArray, sign: String, algorithm: Strin
         false
     }
 }
-
 
 private fun rsaEncryptOrDecryptByPublicKey(data: ByteArray, publicKey: ByteArray, isEncrypt: Boolean, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray {
     return try {
@@ -556,6 +569,7 @@ private fun rsaEncryptOrDecryptByPublicKey(data: ByteArray, publicKey: ByteArray
  * @param publicKey
  * @param transformation
  */
+@JvmOverloads
 fun String.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPublicKey(this.toByteArray(), publicKey, true, transformation)
 
@@ -565,6 +579,7 @@ fun String.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String = 
  * @param publicKey
  * @param transformation
  */
+@JvmOverloads
 fun ByteArray.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPublicKey(this, publicKey, true, transformation)
 
@@ -574,6 +589,7 @@ fun ByteArray.rsaEncryptByPublicKey(publicKey: ByteArray, transformation: String
  * @param publicKey
  * @param transformation
  */
+@JvmOverloads
 fun String.rsaDecryptByPublicKey(publicKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPublicKey(this.toByteArray(), publicKey, false, transformation)
 
@@ -583,6 +599,7 @@ fun String.rsaDecryptByPublicKey(publicKey: ByteArray, transformation: String = 
  * @param publicKey
  * @param transformation
  */
+@JvmOverloads
 fun ByteArray.rsaDecryptByPublicKey(publicKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPublicKey(this, publicKey, false, transformation)
 
@@ -609,6 +626,7 @@ private fun rsaEncryptOrDecryptByPrivateKey(data: ByteArray, privateKey: ByteArr
  * @param privateKey
  * @param transformation
  */
+@JvmOverloads
 fun String.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPrivateKey(this.toByteArray(), privateKey, true, transformation)
 
@@ -618,6 +636,7 @@ fun String.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: String 
  * @param privateKey
  * @param transformation
  */
+@JvmOverloads
 fun ByteArray.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPrivateKey(this, privateKey, true, transformation)
 
@@ -627,6 +646,7 @@ fun ByteArray.rsaEncryptByPrivateKey(privateKey: ByteArray, transformation: Stri
  * @param privateKey
  * @param transformation
  */
+@JvmOverloads
 fun String.rsaDecryptByPrivateKey(privateKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPrivateKey(this.toByteArray(), privateKey, false, transformation)
 
@@ -636,6 +656,7 @@ fun String.rsaDecryptByPrivateKey(privateKey: ByteArray, transformation: String 
  * @param privateKey
  * @param transformation
  */
+@JvmOverloads
 fun ByteArray.rsaDecryptByPrivateKey(privateKey: ByteArray, transformation: String = DEFAULT_RSA_TRANSFORMATION): ByteArray =
         rsaEncryptOrDecryptByPrivateKey(this, privateKey, false, transformation)
 

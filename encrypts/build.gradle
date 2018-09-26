@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 2
+        versionName "1.0.1"
 
     }
 
@@ -52,7 +52,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
-version = "1.0.0"
+version = "1.0.1"
 group = "com.github.zyyoona7"
 publish {
     //bintray.com 用户名/组织名 user/org name
@@ -62,7 +62,7 @@ publish {
     //项目名称 project name
     artifactId = 'encrypts_ext'
     //版本号 version code
-//    publishVersion = '1.0.0'
+//    publishVersion = '1.0.1'
     //项目描述 description
     desc = 'Android Kotlin extensions for encode and encryption/decryption'
     //项目网址链接 link

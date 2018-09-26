@@ -150,28 +150,28 @@ fun handlePermissionResult(permissions: Array<out String>, grantResults: IntArra
     }
 }
 
-fun Fragment.isPermissionGranted(permission: String): Boolean = activity.isPermissionGranted(permission)
+fun Fragment.isPermissionGranted(permission: String): Boolean = activity?.isPermissionGranted(permission) ?: true
 
-fun Fragment.arePermissionGranted(vararg permissions: String): Boolean = activity.arePermissionGranted(*permissions)
+fun Fragment.arePermissionGranted(vararg permissions: String): Boolean = activity?.arePermissionGranted(*permissions) ?:true
 
-fun Fragment.isPermissionAlwaysDenied(permission: String): Boolean = activity.isPermissionAlwaysDenied(permission)
+fun Fragment.isPermissionAlwaysDenied(permission: String): Boolean = activity?.isPermissionAlwaysDenied(permission)?:true
 
-fun Fragment.arePermissionAlwaysDenied(vararg permissions: String): Boolean = activity.arePermissionAlwaysDenied(*permissions)
+fun Fragment.arePermissionAlwaysDenied(vararg permissions: String): Boolean = activity?.arePermissionAlwaysDenied(*permissions) ?:true
 
-fun Fragment.requestPermission(permissions: Array<out String>, requestCode: Int) = activity.requestPermission(permissions, requestCode)
+fun Fragment.requestPermission(permissions: Array<out String>, requestCode: Int) = activity?.requestPermission(permissions, requestCode)
 
 inline fun Fragment.requestPermissionWithRationale(permissions: Array<out String>, requestCode: Int, rationale: ((permissions: Array<out String>) -> Unit)) =
-        activity.requestPermissionWithRationale(permissions, requestCode, rationale)
+        activity?.requestPermissionWithRationale(permissions, requestCode, rationale)
 
-fun android.support.v4.app.Fragment.isPermissionGranted(permission: String): Boolean = activity.isPermissionGranted(permission)
+fun android.support.v4.app.Fragment.isPermissionGranted(permission: String): Boolean = activity?.isPermissionGranted(permission) ?: true
 
-fun android.support.v4.app.Fragment.arePermissionGranted(vararg permissions: String): Boolean = activity.arePermissionGranted(*permissions)
+fun android.support.v4.app.Fragment.arePermissionGranted(vararg permissions: String): Boolean = activity?.arePermissionGranted(*permissions) ?: true
 
-fun android.support.v4.app.Fragment.isPermissionAlwaysDenied(permission: String): Boolean = activity.isPermissionAlwaysDenied(permission)
+fun android.support.v4.app.Fragment.isPermissionAlwaysDenied(permission: String): Boolean = activity?.isPermissionAlwaysDenied(permission) ?: true
 
-fun android.support.v4.app.Fragment.arePermissionAlwaysDenied(vararg permissions: String): Boolean = activity.arePermissionAlwaysDenied(*permissions)
+fun android.support.v4.app.Fragment.arePermissionAlwaysDenied(vararg permissions: String): Boolean = activity?.arePermissionAlwaysDenied(*permissions) ?: true
 
-fun android.support.v4.app.Fragment.requestPermission(permissions: Array<out String>, requestCode: Int) = activity.requestPermission(permissions, requestCode)
+fun android.support.v4.app.Fragment.requestPermission(permissions: Array<out String>, requestCode: Int) = activity?.requestPermission(permissions, requestCode)
 
 inline fun android.support.v4.app.Fragment.requestPermissionWithRationale(permissions: Array<out String>, requestCode: Int, rationale: ((permissions: Array<out String>) -> Unit)) =
-        activity.requestPermissionWithRationale(permissions, requestCode, rationale)
+        activity?.requestPermissionWithRationale(permissions, requestCode, rationale)

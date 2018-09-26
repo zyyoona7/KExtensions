@@ -43,35 +43,35 @@ fun Context.isSoftInputActive(): Boolean {
  */
 
 fun Fragment.showSoftInput(view: View) {
-    activity.showSoftInput(view)
+    activity?.showSoftInput(view)
 }
 
 fun Fragment.hideSoftInput(view: View) {
-    activity.hideSoftInput(view)
+    activity?.hideSoftInput(view)
 }
 
 fun Fragment.hideSoftInput() {
-    activity.hideSoftInput(activity)
+    activity?.hideSoftInput(activity!!)
 }
 
 fun Fragment.isSoftInputActive() {
-    activity.isSoftInputActive()
+    activity?.isSoftInputActive()
 }
 
 fun android.support.v4.app.Fragment.showSoftInput(view: View) {
-    activity.showSoftInput(view)
+    activity?.showSoftInput(view)
 }
 
 fun android.support.v4.app.Fragment.hideSoftInput(view: View) {
-    activity.hideSoftInput(view)
+    activity?.hideSoftInput(view)
 }
 
 fun android.support.v4.app.Fragment.hideSoftInput() {
-    activity.hideSoftInput(activity)
+    activity?.hideSoftInput(activity!!)
 }
 
 fun android.support.v4.app.Fragment.isSoftInputActive() {
-    activity.isSoftInputActive()
+    activity?.isSoftInputActive()
 }
 
 /*

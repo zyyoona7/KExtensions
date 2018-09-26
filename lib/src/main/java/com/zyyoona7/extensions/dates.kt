@@ -83,7 +83,7 @@ Date转换成天数
 internal object DefaultDateFormat {
 
     private const val DEFAULT_DATE_STR = "yyyy-MM-dd HH:mm:ss"
-    val DEFAULT_FORMAT = ThreadLocal<SimpleDateFormat>().apply { set(SimpleDateFormat(DEFAULT_DATE_STR)) }
+    val DEFAULT_FORMAT = ThreadLocal<SimpleDateFormat>().apply { set(SimpleDateFormat(DEFAULT_DATE_STR,Locale.US)) }
 }
 
 /**
@@ -94,7 +94,7 @@ val currentTimeMills: Long get() = System.currentTimeMillis()
 /**
  * 当前时间格式化成指定格式的String类型
  */
-fun currentTimeString(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): String = currentTimeMills.format2DateString(format)
+fun currentTimeString(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): String = currentTimeMills.format2DateString(format)
 
 /**
  * 当前时间的Date类型
@@ -106,7 +106,7 @@ val currentDate: Date get() = Date()
  *
  * @param format
  */
-fun Date.format2String(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): String = format.format(this)
+fun Date.format2String(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): String = format.format(this)
 
 /**
  * Date类型格式化成指定格式的String类型
@@ -128,7 +128,7 @@ fun Long.format2DateString(formatPattern: String): String = Date(this).format2St
  *
  * @param format
  */
-fun Long.format2DateString(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): String = Date(this).format2String(format)
+fun Long.format2DateString(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): String = Date(this).format2String(format)
 
 /**
  * 解析String类型的日期为Long类型
@@ -136,7 +136,7 @@ fun Long.format2DateString(format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT
  * @param time
  * @param format
  */
-fun parseDateString2Mills(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): Long {
+fun parseDateString2Mills(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): Long {
     return try {
         format.parse(time).time
     } catch (e: ParseException) {
@@ -151,7 +151,7 @@ fun parseDateString2Mills(time: String, format: DateFormat = DefaultDateFormat.D
  * @param time
  * @param format
  */
-fun parseString2Date(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): Date {
+fun parseString2Date(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): Date {
     return try {
         format.parse(time)
     } catch (e: ParseException) {
@@ -197,7 +197,7 @@ fun Long.getTimeSpan(otherMills: Long = currentTimeMills, unit: TimeUnit = TimeU
  * @param unit    返回值的时间单位  默认值：天
  */
 fun getTimeSpan(time1: String = currentTimeString(), time2: String,
-                format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get(),
+                format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!,
                 unit: TimeUnit = TimeUnit.DAYS): Long =
         calculateTimeSpan(Math.abs(parseDateString2Mills(time1, format) -
                 parseDateString2Mills(time2, format)), unit)
@@ -231,7 +231,7 @@ fun calculateTimeSpan(diffMills: Long, unit: TimeUnit): Long = when (unit) {
  * 如果是同一年，显示 09-01 15:32
  * 其余显示，2017-09-01
  */
-fun formatAgoStyleForWeibo(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): String = parseDateString2Mills(time, format).formatAgoStyleForWeibo()
+fun formatAgoStyleForWeibo(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): String = parseDateString2Mills(time, format).formatAgoStyleForWeibo()
 
 /**
  * 将时间戳转换成 xx小时前 的样式（同微信）
@@ -247,7 +247,7 @@ fun formatAgoStyleForWeibo(time: String, format: DateFormat = DefaultDateFormat.
  * 如果在两年内，显示xx年前
  * 其余显示，2017-09-01
  */
-fun formatAgoStyleForWeChat(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): String = parseDateString2Mills(time, format).formatAgoStyleForWeChat()
+fun formatAgoStyleForWeChat(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): String = parseDateString2Mills(time, format).formatAgoStyleForWeChat()
 
 /**
  * 将时间戳转换成 xx小时前 的样式（同微博）
@@ -426,6 +426,6 @@ val Long.dayOfWeek: Int
  * @param format
  * @return 星期日 为1
  */
-fun dayOfWeek(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()): Int {
+fun dayOfWeek(time: String, format: DateFormat = DefaultDateFormat.DEFAULT_FORMAT.get()!!): Int {
     return parseString2Date(time, format).dayOfWeek
 }

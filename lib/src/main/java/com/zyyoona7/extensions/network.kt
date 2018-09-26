@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.support.annotation.RequiresPermission
 import android.telephony.TelephonyManager
 
 /**
@@ -18,6 +19,7 @@ import android.telephony.TelephonyManager
  * 需添加权限 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
  */
 val Context.networkInfo: NetworkInfo?
+    @RequiresPermission(value = "android.permission.ACCESS_NETWORK_STATE")
     get() = connectivityManager?.activeNetworkInfo
 
 /**
@@ -35,6 +37,7 @@ val Context.isNetworkConnected: Boolean
 var Context.isWifiEnable: Boolean
     get() = wifiManager?.isWifiEnabled ?: false
     set(value) {
+        @RequiresPermission(value = "android.permission.ACCESS_WIFI_STATE")
         wifiManager?.isWifiEnabled = value
     }
 
@@ -107,52 +110,52 @@ val Context.networkType: NetworkType
  */
 
 val Fragment.networkInfo: NetworkInfo?
-    get() = activity.networkInfo
+    get() = activity?.networkInfo
 
 val Fragment.isNetworkConnected: Boolean
-    get() = activity.isNetworkConnected
+    get() = activity?.isNetworkConnected ?: false
 
 var Fragment.isWifiEnable: Boolean
-    get() = activity.isWifiEnable
+    get() = activity?.isWifiEnable ?: false
     set(value) {
-        activity.isWifiEnable = value
+        activity?.isWifiEnable = value
     }
 
 val Fragment.isWifiConnected: Boolean
-    get() = activity.isWifiConnected
+    get() = activity?.isWifiConnected ?: false
 
 val Fragment.isMobileConnected: Boolean
-    get() = activity.isMobileConnected
+    get() = activity?.isMobileConnected ?: false
 
 val Fragment.networkOperatorName: String?
-    get() = activity.networkOperatorName
+    get() = activity?.networkOperatorName
 
 val Fragment.networkType: NetworkType
-    get() = activity.networkType
+    get() = activity?.networkType ?: NetworkType.NETWORK_NO
 
 val android.support.v4.app.Fragment.networkInfo: NetworkInfo?
-    get() = activity.networkInfo
+    get() = activity?.networkInfo
 
 val android.support.v4.app.Fragment.isNetworkConnected: Boolean
-    get() = activity.isNetworkConnected
+    get() = activity?.isNetworkConnected ?: false
 
 var android.support.v4.app.Fragment.isWifiEnable: Boolean
-    get() = activity.isWifiEnable
+    get() = activity?.isWifiEnable ?: false
     set(value) {
-        activity.isWifiEnable = value
+        activity?.isWifiEnable = value
     }
 
 val android.support.v4.app.Fragment.isWifiConnected: Boolean
-    get() = activity.isWifiConnected
+    get() = activity?.isWifiConnected ?: false
 
 val android.support.v4.app.Fragment.isMobileConnected: Boolean
-    get() = activity.isMobileConnected
+    get() = activity?.isMobileConnected ?: false
 
 val android.support.v4.app.Fragment.networkOperatorName: String?
-    get() = activity.networkOperatorName
+    get() = activity?.networkOperatorName
 
 val android.support.v4.app.Fragment.networkType: NetworkType
-    get() = activity.networkType
+    get() = activity?.networkType ?: NetworkType.NETWORK_NO
 
 enum class NetworkType {
     NETWORK_WIFI,

@@ -7,6 +7,7 @@ import android.os.Environment.getExternalStorageDirectory
 import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
+import com.zyyoona7.encrypts.initCipher
 import com.zyyoona7.extensions.*
 import java.io.File
 import java.text.SimpleDateFormat

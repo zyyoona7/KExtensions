@@ -50,18 +50,18 @@ fun Context.setIntentDataAndType(intent: Intent, type: String, file: File, autho
     }
 }
 
-fun Fragment.getUriFromFile(file: File, authority: String = "${activity.packageName}.fileprovider"): Uri {
-    return activity.getUriFromFile(file, authority)
+fun Fragment.getUriFromFile(file: File, authority: String = "${activity?.packageName}.fileprovider"): Uri {
+    return activity?.getUriFromFile(file, authority) ?: Uri.EMPTY
 }
 
 fun Fragment.setIntentDataAndType(intent: Intent, type: String, file: File, authority: String, writeEnable: Boolean) {
-    activity.setIntentDataAndType(intent, type, file, authority, writeEnable)
+    activity?.setIntentDataAndType(intent, type, file, authority, writeEnable)
 }
 
-fun android.support.v4.app.Fragment.getUriFromFile(file: File, authority: String = "${activity.packageName}.fileprovider"): Uri {
-    return activity.getUriFromFile(file, authority)
+fun android.support.v4.app.Fragment.getUriFromFile(file: File, authority: String = "${activity?.packageName}.fileprovider"): Uri {
+    return activity?.getUriFromFile(file, authority) ?: Uri.EMPTY
 }
 
 fun android.support.v4.app.Fragment.setIntentDataAndType(intent: Intent, type: String, file: File, authority: String, writeEnable: Boolean) {
-    activity.setIntentDataAndType(intent, type, file, authority, writeEnable)
+    activity?.setIntentDataAndType(intent, type, file, authority, writeEnable)
 }

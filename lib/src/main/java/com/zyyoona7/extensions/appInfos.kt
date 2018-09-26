@@ -102,49 +102,49 @@ fun Context.isTablet(): Boolean {
   ---------- Fragment ----------
  */
 fun Fragment.getVersionName(pkgName: String = activity.packageName): String {
-    return activity.getVersionName(pkgName)
+    return activity?.getVersionName(pkgName) ?: ""
 }
 
 fun Fragment.getVersionCode(pkgName: String = activity.packageName): Int {
-    return activity.getVersionCode(pkgName)
+    return activity?.getVersionCode(pkgName) ?: -1
 }
 
 fun Fragment.installApp(file: File, authority: String, writeEnable: Boolean) {
-    activity.installApp(file, authority, writeEnable)
+    activity?.installApp(file, authority, writeEnable)
 }
 
 fun Fragment.isInstallApp(pkgName: String): Boolean {
-    return activity.isInstallApp(pkgName)
+    return activity?.isInstallApp(pkgName) ?: false
 }
 
 fun Fragment.isAppForeground(pkgName: String = activity.packageName): Boolean {
-    return activity.isAppForeground(pkgName)
+    return activity?.isAppForeground(pkgName) ?: false
 }
 
 fun Fragment.isTablet(): Boolean {
-    return activity.isTablet()
+    return activity?.isTablet() ?: false
 }
 
-fun android.support.v4.app.Fragment.getVersionName(pkgName: String = activity.packageName): String {
-    return activity.getVersionName(pkgName)
+fun android.support.v4.app.Fragment.getVersionName(pkgName: String = activity?.packageName ?: ""): String {
+    return activity?.getVersionName(pkgName) ?: ""
 }
 
-fun android.support.v4.app.Fragment.getVersionCode(pkgName: String = activity.packageName): Int {
-    return activity.getVersionCode(pkgName)
+fun android.support.v4.app.Fragment.getVersionCode(pkgName: String = activity?.packageName?:""): Int {
+    return activity?.getVersionCode(pkgName) ?: -1
 }
 
 fun android.support.v4.app.Fragment.installApp(file: File, authority: String, writeEnable: Boolean) {
-    activity.installApp(file, authority, writeEnable)
+    activity?.installApp(file, authority, writeEnable)
 }
 
 fun android.support.v4.app.Fragment.isInstallApp(pkgName: String): Boolean {
-    return activity.isInstallApp(pkgName)
+    return activity?.isInstallApp(pkgName) ?: false
 }
 
-fun android.support.v4.app.Fragment.isAppForeground(pkgName: String = activity.packageName): Boolean {
-    return activity.isAppForeground(pkgName)
+fun android.support.v4.app.Fragment.isAppForeground(pkgName: String = activity?.packageName ?:""): Boolean {
+    return activity?.isAppForeground(pkgName) ?: false
 }
 
 fun android.support.v4.app.Fragment.isTablet(): Boolean {
-    return activity.isTablet()
+    return activity?.isTablet() ?: false
 }

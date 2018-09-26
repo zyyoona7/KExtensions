@@ -25,11 +25,11 @@ fun Context.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
   ---------- Fragment ----------
  */
 fun Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-    activity.toast(msg, duration)
+    activity?.toast(msg, duration)
 }
 
 fun android.support.v4.app.Fragment.toast(msg: String, duration: Int = Toast.LENGTH_SHORT) {
-    activity.toast(msg, duration)
+    activity?.toast(msg, duration)
 }
 
 /*

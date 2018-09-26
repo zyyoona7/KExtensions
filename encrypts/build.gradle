@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: "guru.stefma.bintrayrelease"
+
+android {
+    compileSdkVersion compile_sdk_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+        versionCode 1
+        versionName "1.0.0"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+}
+
+sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+    //加上这些
+    tasks.withType(Javadoc) {
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
+
+}
+
+
+
+dependencies {
+    compileOnly fileTree(dir: 'libs', include: ['*.jar'])
+    compileOnly "com.android.support:appcompat-v7:$support_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+version = "1.0.0"
+group = "com.github.zyyoona7"
+publish {
+    //bintray.com 用户名/组织名 user/org name
+    userOrg = 'zyyoona7'
+    //JCenter上显示的路径 path
+//    groupId = 'com.github.zyyoona7'
+    //项目名称 project name
+    artifactId = 'encrypts_ext'
+    //版本号 version code
+//    publishVersion = '1.0.0'
+    //项目描述 description
+    desc = 'Android Kotlin extensions for encode and encryption/decryption'
+    //项目网址链接 link
+    website = 'https://github.com/zyyoona7/KExtensions'
+}

@@ -36,7 +36,7 @@ val Context.cacheDirPath: String
  * 应用程序文件目录("/Android/data/<包名>/files")
  */
 val Context.externalFileDirPath: String
-    get() = getExternalFilesDir("").absolutePath
+    get() = getExternalFilesDir("")?.absolutePath ?: ""
 
 /**
  * 获取应用外置缓存目录
@@ -44,34 +44,34 @@ val Context.externalFileDirPath: String
  * 应用程序缓存目录("/Android/data/<包名>/cache")
  */
 val Context.externalCacheDirPath: String
-    get() = externalCacheDir.absolutePath
+    get() = externalCacheDir?.absolutePath ?: ""
 
 /*
   ---------- Fragment ----------
  */
 val Fragment.fileDirPath: String
-    get() = activity.fileDirPath
+    get() = activity?.fileDirPath ?: ""
 
 val Fragment.cacheDirPath: String
-    get() = activity.cacheDirPath
+    get() = activity?.cacheDirPath ?: ""
 
 val Fragment.externalFileDirPath: String
-    get() = activity.externalFileDirPath
+    get() = activity?.externalFileDirPath ?: ""
 
 val Fragment.externalCacheDirPath: String
-    get() = activity.externalCacheDirPath
+    get() = activity?.externalCacheDirPath ?: ""
 
 val android.support.v4.app.Fragment.fileDirPath: String
-    get() = activity.fileDirPath
+    get() = activity?.fileDirPath ?: ""
 
 val android.support.v4.app.Fragment.cacheDirPath: String
-    get() = activity.cacheDirPath
+    get() = activity?.cacheDirPath ?: ""
 
 val android.support.v4.app.Fragment.externalFileDirPath: String
-    get() = activity.externalFileDirPath
+    get() = activity?.externalFileDirPath ?:""
 
 val android.support.v4.app.Fragment.externalCacheDirPath: String
-    get() = activity.externalCacheDirPath
+    get() = activity?.externalCacheDirPath ?:""
 
 /*
   ---------- File/Any ----------

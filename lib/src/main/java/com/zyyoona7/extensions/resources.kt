@@ -26,7 +26,7 @@ import java.io.InputStream
  */
 fun Context.loadColor(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
 
-fun Context.loadDrawable(@DrawableRes id: Int): Drawable = ContextCompat.getDrawable(this, id)
+fun Context.loadDrawable(@DrawableRes id: Int): Drawable? = ContextCompat.getDrawable(this, id)
 
 fun Context.loadRaw(@RawRes id: Int): InputStream? = resources.openRawResource(id)
 
@@ -51,29 +51,29 @@ fun loadTypefaceFromFile(file: File): Typeface = Typeface.createFromFile(file)
 /*
   ---------- Fragment ----------
  */
-fun Fragment.loadColor(@ColorRes id: Int): Int = activity.loadColor(id)
+fun Fragment.loadColor(@ColorRes id: Int): Int = activity?.loadColor(id) ?: 0
 
-fun Fragment.loadDrawable(@DrawableRes id: Int): Drawable = activity.loadDrawable(id)
+fun Fragment.loadDrawable(@DrawableRes id: Int): Drawable? = activity?.loadDrawable(id)
 
-fun Fragment.loadRaw(@RawRes id: Int): InputStream? = activity.loadRaw(id)
+fun Fragment.loadRaw(@RawRes id: Int): InputStream? = activity?.loadRaw(id)
 
-fun Fragment.loadRaw(@RawRes id: Int, value: TypedValue): InputStream? = activity.loadRaw(id, value)
+fun Fragment.loadRaw(@RawRes id: Int, value: TypedValue): InputStream? = activity?.loadRaw(id, value)
 
-fun Fragment.loadAsset(fileName: String, accessMode: Int = AssetManager.ACCESS_STREAMING): InputStream? = activity.loadAsset(fileName, accessMode)
+fun Fragment.loadAsset(fileName: String, accessMode: Int = AssetManager.ACCESS_STREAMING): InputStream? = activity?.loadAsset(fileName, accessMode)
 
-fun Fragment.loadTypefaceFromAsset(fileName: String): Typeface = activity.loadTypefaceFromAsset(fileName)
+fun Fragment.loadTypefaceFromAsset(fileName: String): Typeface? = activity?.loadTypefaceFromAsset(fileName)
 
-fun android.support.v4.app.Fragment.loadColor(@ColorRes id: Int): Int = activity.loadColor(id)
+fun android.support.v4.app.Fragment.loadColor(@ColorRes id: Int): Int = activity?.loadColor(id) ?: 0
 
-fun android.support.v4.app.Fragment.loadDrawable(@DrawableRes id: Int): Drawable = activity.loadDrawable(id)
+fun android.support.v4.app.Fragment.loadDrawable(@DrawableRes id: Int): Drawable? = activity?.loadDrawable(id)
 
-fun android.support.v4.app.Fragment.loadRaw(@RawRes id: Int): InputStream? = activity.loadRaw(id)
+fun android.support.v4.app.Fragment.loadRaw(@RawRes id: Int): InputStream? = activity?.loadRaw(id)
 
-fun android.support.v4.app.Fragment.loadRaw(@RawRes id: Int, value: TypedValue): InputStream? = activity.loadRaw(id, value)
+fun android.support.v4.app.Fragment.loadRaw(@RawRes id: Int, value: TypedValue): InputStream? = activity?.loadRaw(id, value)
 
-fun android.support.v4.app.Fragment.loadAsset(fileName: String, accessMode: Int = AssetManager.ACCESS_STREAMING): InputStream? = activity.loadAsset(fileName, accessMode)
+fun android.support.v4.app.Fragment.loadAsset(fileName: String, accessMode: Int = AssetManager.ACCESS_STREAMING): InputStream? = activity?.loadAsset(fileName, accessMode)
 
-fun android.support.v4.app.Fragment.loadTypefaceFromAsset(fileName: String): Typeface = activity.loadTypefaceFromAsset(fileName)
+fun android.support.v4.app.Fragment.loadTypefaceFromAsset(fileName: String): Typeface? = activity?.loadTypefaceFromAsset(fileName)
 
 
 /*
@@ -81,7 +81,7 @@ fun android.support.v4.app.Fragment.loadTypefaceFromAsset(fileName: String): Typ
  */
 fun View.loadColor(@ColorRes id: Int): Int = context.loadColor(id)
 
-fun View.loadDrawable(@ColorRes id: Int): Drawable = context.loadDrawable(id)
+fun View.loadDrawable(@ColorRes id: Int): Drawable? = context.loadDrawable(id)
 
 fun View.loadRaw(@RawRes id: Int): InputStream? = context.loadRaw(id)
 

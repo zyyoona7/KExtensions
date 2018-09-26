@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.annotation.RequiresPermission
 
 /**
  * Created by zyyoona7 on 2017/8/24.
@@ -64,7 +65,7 @@ inline fun <reified T : Service> Service.startActivity(extras: Bundle? = null) {
  * @param extras Nullable
  */
 inline fun <reified T : Activity> Fragment.startActivity(extras: Bundle? = null) {
-    startActivity(activity.createIntent<T>(extras))
+    startActivity(activity?.createIntent<T>(extras))
 }
 
 /**
@@ -72,14 +73,14 @@ inline fun <reified T : Activity> Fragment.startActivity(extras: Bundle? = null)
  * @param requestCode
  */
 inline fun <reified T : Activity> Fragment.startActivityForResult(extras: Bundle? = null, requestCode: Int) {
-    startActivityForResult(activity.createIntent<T>(extras), requestCode)
+    startActivityForResult(activity?.createIntent<T>(extras), requestCode)
 }
 
 /**
  * @param extras Nullable
  */
 inline fun <reified T : Activity> android.support.v4.app.Fragment.startActivity(extras: Bundle? = null) {
-    startActivity(activity.createIntent<T>(extras))
+    startActivity(activity?.createIntent<T>(extras))
 }
 
 /**
@@ -87,7 +88,7 @@ inline fun <reified T : Activity> android.support.v4.app.Fragment.startActivity(
  * @param requestCode
  */
 inline fun <reified T : Activity> android.support.v4.app.Fragment.startActivityForResult(extras: Bundle? = null, requestCode: Int) {
-    startActivityForResult(activity.createIntent<T>(extras), requestCode)
+    startActivityForResult(activity?.createIntent<T>(extras), requestCode)
 }
 
 /**
@@ -102,7 +103,7 @@ inline fun <reified T : Service> Context.startService(extras: Bundle? = null) {
 /**
  *  send sms
  */
-fun Fragment.sendSMS(number: String, text: String = ""): Boolean = activity.sendSMS(number, text)
+fun Fragment.sendSMS(number: String, text: String = ""): Boolean = activity?.sendSMS(number, text) ?:false
 
 /**
  * @param number
@@ -123,11 +124,13 @@ fun Context.sendSMS(number: String, text: String = ""): Boolean {
 /**
  * call phone
  */
-fun Fragment.makeCall(number: String): Boolean = activity.makeCall(number)
+@RequiresPermission(value = "android.permission.CALL_PHONE")
+fun Fragment.makeCall(number: String): Boolean = activity?.makeCall(number) ?: false
 
 /**
  * @param number phone number
  */
+@RequiresPermission(value = "android.permission.CALL_PHONE")
 fun Context.makeCall(number: String): Boolean {
     return try {
         val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
@@ -143,7 +146,7 @@ fun Context.makeCall(number: String): Boolean {
  * send email
  */
 
-fun Fragment.email(email: String, subject: String = "", text: String = "") = activity.email(email, subject, text)
+fun Fragment.email(email: String, subject: String = "", text: String = "") = activity?.email(email, subject, text)
 
 /**
  * @param email
@@ -169,7 +172,7 @@ fun Context.email(email: String, subject: String = "", text: String = ""): Boole
 /**
  * shared
  */
-fun Fragment.share(text: String, subject: String = "") = activity.share(text, subject)
+fun Fragment.share(text: String, subject: String = "") = activity?.share(text, subject)
 
 /**
  * @param text
@@ -192,7 +195,7 @@ fun Context.share(text: String, subject: String = ""): Boolean {
 /**
  * browse web
  */
-fun Fragment.browse(url: String, newTask: Boolean = false) = activity.browse(url, newTask)
+fun Fragment.browse(url: String, newTask: Boolean = false) = activity?.browse(url, newTask)
 
 /**
  * @param url

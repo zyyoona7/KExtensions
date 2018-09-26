@@ -67,33 +67,34 @@ val Fragment.screenWidth
 val Fragment.screenHeight
     get() = activity.screenHeight
 
-fun Fragment.dip2px(value: Int) = activity.dip2px(value)
-fun Fragment.dip2px(value: Float) = activity.dip2px(value)
+fun Fragment.dip2px(value: Int): Int = activity?.dip2px(value) ?: 0
+fun Fragment.dip2px(value: Float): Int = activity?.dip2px(value) ?: 0
 
-fun Fragment.sp2px(value: Int) = activity.sp2px(value)
-fun Fragment.sp2px(value: Float) = activity.sp2px(value)
+fun Fragment.sp2px(value: Int): Int = activity?.sp2px(value) ?: 0
+fun Fragment.sp2px(value: Float): Int = activity?.sp2px(value) ?: 0
 
-fun Fragment.px2dip(px: Int) = activity.px2dip(px)
-fun Fragment.px2sp(px: Int) = activity.px2sp(px)
+fun Fragment.px2dip(px: Int): Float = activity?.px2dip(px) ?: 0f
+fun Fragment.px2sp(px: Int): Float = activity?.px2sp(px) ?: 0f
 
-fun Fragment.dimen2px(@DimenRes resource: Int) = activity.dimen2px(resource)
+fun Fragment.dimen2px(@DimenRes resource: Int): Int = activity?.dimen2px(resource) ?: 0
 
 val android.support.v4.app.Fragment.screenWidth
-    get() = activity.screenWidth
+    get() = activity?.screenWidth
 
 val android.support.v4.app.Fragment.screenHeight
-    get() = activity.screenHeight
+    get() = activity?.screenHeight
 
-fun android.support.v4.app.Fragment.dip2px(value: Int) = activity.dip2px(value)
-fun android.support.v4.app.Fragment.dip2px(value: Float) = activity.dip2px(value)
+fun android.support.v4.app.Fragment.dip2px(value: Int): Int = activity?.dip2px(value) ?: 0
+fun android.support.v4.app.Fragment.dip2px(value: Float): Int = activity?.dip2px(value) ?: 0
 
-fun android.support.v4.app.Fragment.sp2px(value: Int) = activity.sp2px(value)
-fun android.support.v4.app.Fragment.sp2px(value: Float) = activity.sp2px(value)
+fun android.support.v4.app.Fragment.sp2px(value: Int): Int = activity?.sp2px(value) ?: 0
+fun android.support.v4.app.Fragment.sp2px(value: Float): Int = activity?.sp2px(value) ?: 0
 
-fun android.support.v4.app.Fragment.px2dip(px: Int) = activity.px2dip(px)
-fun android.support.v4.app.Fragment.px2sp(px: Int) = activity.px2sp(px)
+fun android.support.v4.app.Fragment.px2dip(px: Int): Float = activity?.px2dip(px) ?: 0f
+fun android.support.v4.app.Fragment.px2sp(px: Int): Float = activity?.px2sp(px) ?: 0f
 
-fun android.support.v4.app.Fragment.dimen2px(@DimenRes resource: Int) = activity.dimen2px(resource)
+fun android.support.v4.app.Fragment.dimen2px(@DimenRes resource: Int): Int = activity?.dimen2px(resource)
+        ?: 0
 
 /*
   ---------- View ----------
@@ -104,13 +105,13 @@ val View.screenWidth
 val View.screenHeight
     get() = context.screenHeight
 
-fun View.dip2px(value: Int) = context.dip2px(value)
-fun View.dip2px(value: Float) = context.dip2px(value)
+fun View.dip2px(value: Int):Int = context.dip2px(value)
+fun View.dip2px(value: Float):Int = context.dip2px(value)
 
-fun View.sp2px(value: Int) = context.sp2px(value)
-fun View.sp2px(value: Float) = context.sp2px(value)
+fun View.sp2px(value: Int):Int = context.sp2px(value)
+fun View.sp2px(value: Float):Int = context.sp2px(value)
 
-fun View.px2dip(px: Int) = context.px2dip(px)
-fun View.px2sp(px: Int) = context.px2sp(px)
+fun View.px2dip(px: Int):Float = context.px2dip(px)
+fun View.px2sp(px: Int):Float = context.px2sp(px)
 
-fun View.dimen2px(@DimenRes resource: Int) = context.dimen2px(resource)
+fun View.dimen2px(@DimenRes resource: Int):Int = context.dimen2px(resource)
